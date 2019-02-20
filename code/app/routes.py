@@ -27,12 +27,18 @@ def login():
         if hashPass == loginUser['password']:
             session['username'] = request.form['username']
             return render_template('index.html')
-    return render_template('login.html', Form='login-form', altForm='register-form', loginMessage='Invalid Password/Username')
+    return render_template('login.html', \
+                           Form='login-form', \
+                           altForm='register-form', \
+                           loginMessage='Invalid Password/Username')
 
 @app.route('/logout')
 def logout():
     session['username'] = ''
-    return render_template('login.html', Form='login-form', altForm='register-form', loginMessage='You have been logged out!')
+    return render_template('login.html', \
+                           Form='login-form', \
+                           altForm='register-form', \
+                           loginMessage='You have been logged out!')
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -47,4 +53,7 @@ def register():
             session['username'] = request.form['username']
             return render_template('index.html')
         
-    return render_template('login.html', altForm='login-form', Form='register-form', registerMessage='Sorry that username already exists')
+    return render_template('login.html', \
+                           altForm='login-form', \
+                           Form='register-form', \
+                           registerMessage='Sorry that username already exists')
