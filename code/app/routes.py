@@ -20,6 +20,7 @@ def index():
 
 @app.route('/login', methods=['POST'])
 def login():
+    #database connection not working.
     users = db.users
     loginUser = users.find_one({'username' : request.form['username']})
     hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), loginUser['password'])
