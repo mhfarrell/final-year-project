@@ -30,12 +30,19 @@ def login():
 @app.route('/logout')
 def logout():
     session['username'] = ''
-    return render_template('login.html')
+    return render_template('login.html', loginMessage='You have been logged out!')
 
-@app.route('/register')
-def index():
-    return render_template('index.html')
-
-@app.route('/chat')
-def index():
-    return render_template('index.html')
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    if request.method == 'POST':
+        users = db.users
+        #userCheck is checking database if the username from the new user exists already
+        userCheck = users.find_one({'username' : request.form['username']})
+        #If the username is unclaimed the new user can register
+        if userCheck is None:
+            hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
+            users.insert({'username' : request.form['username'], 'password' : hashpass})
+            session['username'] = request.form['username']
+            return render_template('index.html')
+        
+    return render_template('login.html', loginMessage='Sorry that username already exists')
