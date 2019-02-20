@@ -73,12 +73,13 @@ body {
   border: 0;
   background: #393939;
 }
-#social-buttons div span {
+#login-form div span {
   font-weight: bold;
   color: #aaaaaa
 }
 #login-form input {
-    background-color: white;
+    background-color: #ffffff;
+	
 }
 #form-line {
   position: absolute; 
