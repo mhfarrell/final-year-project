@@ -9,12 +9,12 @@
 		<div id="login-page">
 			<div id="login-form">
 				<div style="margin-top: 18px;">
-					<form action="/register" class="{{ altForm }}" method="post" >
+					<form action="/register" class="{{ altForm }}" method="POST" >
 						<div><span>Register</span></div>
 						<br/>
 						<div><span>{{ registerMessage }}</span></div>
 						<br/>						
-						<input type="text" name="firstName" placeholder="First Name"/>
+						<input type="text" name="firstname" placeholder="First Name"/>
 						<input type="text" name="surname" placeholder="Surname"/>
 						<input type="text" name="email" placeholder="Email"/>
 						<input type="text" name="company" placeholder="Company"/>
@@ -24,7 +24,7 @@
 						<button type="submit" id="register">Register</button>
 						<p class="message">Already registered? <a href="#">Sign In</a></p>
 					</form>
-					<form action="/login" class="{{ Form }}" method="post">
+					<form action="/login" class="{{ Form }}" method="POST">
 						<div><span>Login</span></div>
 						<br/>
 						<div><span>{{ loginMessage }}</span></div>

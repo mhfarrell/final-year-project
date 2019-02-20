@@ -5,7 +5,7 @@ import bcrypt
 import sys, getopt, pprint
 from pymongo import MongoClient
 
-c = MongoClient('mongodb://admin:Admin123@ds119024.mlab.com:19024/chatdatabase')
+c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
 db= c.chatdatabase
 
 @app.route('/')
@@ -23,7 +23,7 @@ def login():
     #database connection not working.
     users = db.users
     loginUser = users.find_one({'username' : request.form['username']})
-    hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), loginUser['password'])
+    hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), loginUser['password'].encode('utf-8'))
     if loginUser:
         if hashPass == loginUser['password']:
             session['username'] = request.form['username']
