@@ -25,10 +25,11 @@ def login():
         if hashPass == loginUser['password']:
             session['username'] = request.form['username']
             return render_template('index.html')
-    return render_template('login.html' loginMessage='Invalid Password/Username')
+    return render_template('login.html', loginMessage='Invalid Password/Username')
 
 @app.route('/logout')
-def index():
+def logout():
+    session['username'] = ''
     return render_template('login.html')
 
 @app.route('/register')
