@@ -7,6 +7,8 @@ from pymongo import MongoClient
 
 c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
 db= c.chatdatabase
+#move to a static file maybe something encrypted.
+app.secret_key = 'shush_its_secret'
 
 @app.route('/')
 @app.route('/index')
@@ -20,14 +22,15 @@ def index():
 
 @app.route('/login', methods=['POST'])
 def login():
-    #database connection not working.
     users = db.users
     loginUser = users.find_one({'username' : request.form['username']})
-    hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), loginUser['password'].encode('utf-8'))
+    print(request.form['username'])
     if loginUser:
-        if hashPass == loginUser['password']:
-            session['username'] = request.form['username']
-            return render_template('index.html')
+        hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), loginUser['password'])
+        if loginUser:
+            if hashPass == loginUser['password']:
+                session['username'] = request.form['username']
+                return render_template('index.html')
     return render_template('login.html', \
                            Form='login-form', \
                            altForm='register-form', \
@@ -50,7 +53,7 @@ def register():
         #If the username is unclaimed the new user can register
         if userCheck is None:
             hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-            users.insert({'username' : request.form['username'], 'password' : hashpass, 'firstName' : request.form['firstname'], 'surname' : request.form['surname'], 'email' : request.form['email'], 'company' : request.form['company']})
+            users.insert({'username' : request.form['username'], 'password' : hashPass, 'firstName' : request.form['firstname'], 'surname' : request.form['surname'], 'email' : request.form['email'], 'company' : request.form['company']})
             session['username'] = request.form['username']
             return render_template('index.html')
         
