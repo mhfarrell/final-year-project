@@ -4,10 +4,11 @@ from app import app
 import bcrypt
 import sys, getopt, pprint
 from pymongo import MongoClient
+from flask_socketio import SocketIO, emit
 
 c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
 db= c.chatdatabase
-#move to a static file maybe something encrypted.
+#make this a hashed version of something unique to the user
 app.secret_key = 'shush_its_secret'
 
 @app.route('/')
@@ -61,3 +62,19 @@ def register():
                            altForm='login-form', \
                            Form='register-form', \
                            registerMessage='Sorry that username already exists')
+
+@socketio.on('my event', namespace='/test')
+def test_message(message):
+    emit('my response', {'data': message['data']})
+
+@socketio.on('my broadcast event', namespace='/test')
+def test_message(message):
+    emit('my response', {'data': message['data']}, broadcast=True)
+
+@socketio.on('connect', namespace='/test')
+def test_connect():
+    emit('my response', {'data': 'Connected'})
+
+@socketio.on('disconnect', namespace='/test')
+def test_disconnect():
+    print('Client disconnected')

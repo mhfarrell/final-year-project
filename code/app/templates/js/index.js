@@ -1,5 +1,4 @@
-WEB_SOCKET_SWF_LOCATION = "/js/WebSocketMain.swf";
-ws_init("ws://localhost:8888/ws_channel");
+io.on('connect', onConnect);
 
 $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
@@ -35,7 +34,48 @@ $("#status-options ul li").click(function() {
 	$("#status-options").removeClass("active");
 });
 
-function ws_init(url) {
+
+
+$(document).ready(function() {
+            namespace = '/test';
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+			socket.on('connect', function(){
+				socket.emit('my_event', {data: 'Connected!'});
+			};
+			
+			socket.on('myResponse', function(msg){
+				var jsonMsg= JSON.parse(msg.data);
+				newMessage(jsonMsg.username, jsonMsg.message);
+			};
+
+
+            // Handlers for the different forms in the page.
+            // These accept data from the user and send it to the server in a
+            // variety of ways
+            $('form#join').submit(function(event) {
+                socket.emit('join', {room: $('#join_room').val()});
+                return false;
+            });
+            $('form#leave').submit(function(event) {
+                socket.emit('leave', {room: $('#leave_room').val()});
+                return false;
+            });
+            $('form#send_room').submit(function(event) {
+                socket.emit('my_room_event', {room: $('#room_name').val(), data: $('#room_data').val()});
+                return false;
+            });
+            $('form#close').submit(function(event) {
+                socket.emit('close_room', {room: $('#close_room').val()});
+                return false;
+            });
+            $('form#disconnect').submit(function(event) {
+                socket.emit('disconnect_request');
+                return false;
+            });
+        });
+
+
+/* function ws_init(url) {
 
 	console.log("connecting to: " + url + "...");
 	ws = new WebSocket(url);
@@ -50,17 +90,26 @@ function ws_init(url) {
 			console.log("Connection closed");
 		}
 
-};
+}; */
 
+function socketio_send(user, msg){
+	var msgText = '{"chatID": "1","username":"' + user + '" , "message":"' + msg + '"}';
+	socket.send(msgText);
+	
+};
+/*
 function ws_send(user, msg){
 	//form message into json string
 	var msgText = '{"chatID": "1","username":"' + user + '" , "message":"' + msg + '"}';
 	//send json to web socket
 	ws.send(msgText);
 };
+*/
 
-function ws_close(){
-	ws.close();
+//https://socket.io/get-started/chat
+
+function socketio_close(){
+	socket.disconnect();
 };
 
 
