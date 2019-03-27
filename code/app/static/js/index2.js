@@ -46,8 +46,6 @@ $("#status-options ul li").click(function() {
             // Connect to the Socket.IO server.
             // The connection URL has the following format:
             //     http[s]://<domain>:<port>[/<namespace>]
-			console.log("here");
-			console.log(namespace);
             var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 			console.log(socket);
             // Event handler for new connections.
@@ -60,7 +58,7 @@ $("#status-options ul li").click(function() {
 
             socket.on('my_response', function(msg) {
 				if(msg.username == null){
-					console.log('Received #' + msg.count + ' : ' + msg.data + ', username: ' + msg.current_user);
+					console.log('Received #' + msg.count + ' : ' + msg.data);
 				}else{
 					if(activeUser == msg.username){
 						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));

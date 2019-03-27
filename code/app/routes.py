@@ -25,7 +25,7 @@ def test_connect():
     with thread_lock:
         if thread is None:
             thread = socketio.start_background_task(background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0, 'current_user': session['username']})
+    emit('my_response', {'data': 'Connected', 'count': 0})
 
 
 @socketio.on('disconnect', namespace='/test')
@@ -47,7 +47,7 @@ def background_thread():
 def index():
     if 'username' in session:
         print(session['username'])
-        return render_template('index2.html', current_user='test')
+        return render_template('index2.html', current_user=session['username'])
     
     return render_template('login.html', \
                            Form='login-form', \
@@ -63,7 +63,9 @@ def login():
         if loginUser:
             if hashPass == loginUser['password']:
                 session['username'] = request.form['username']
-                return render_template('index2.html')
+                print(session['username'])
+                return render_template('index2.html', current_user=session['username'])
+
     return render_template('login.html', \
                            Form='login-form', \
                            altForm='register-form', \
