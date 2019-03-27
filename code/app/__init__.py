@@ -1,7 +1,9 @@
 from flask import Flask
 
 app = Flask(__name__)
-from app import databases
+print("run db")
+from app import database
+print("run routes")
 from app import routes
 
 if __name__ == '__main__':

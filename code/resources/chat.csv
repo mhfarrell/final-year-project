@@ -1,36 +1,36 @@
-﻿chatID,To,From,date,time,data
-12345,quickstream,test,26/03/2019,12:00,hi
-12345,test,quickstream,27/03/2019,13:00,hey
-12345,quickstream,test,28/03/2019,14:00,you ok?
-12345,test,quickstream,29/03/2019,15:00,im good
-12345,quickstream,test,30/03/2019,16:00,busy?
-12345,test,quickstream,31/03/2019,17:00,no
-12345,quickstream,test,01/04/2019,18:00,can you help me?
-12345,test,quickstream,02/04/2019,19:00,yes
-12345,quickstream,test,03/04/2019,20:00,I want to test my chat
-12345,test,quickstream,04/04/2019,21:00,I can do that
-12345,quickstream,test,05/04/2019,22:00,thank you
-12345,test,quickstream,06/04/2019,23:00,what do I need to do
-12345,quickstream,test,07/04/2019,00:00,just keep replying
-12345,test,quickstream,08/04/2019,01:00,is that it?
-12345,quickstream,test,09/04/2019,02:00,yeh
-12345,test,quickstream,10/04/2019,03:00,wow easy
-12345,quickstream,test,11/04/2019,04:00,I know
-12345,test,quickstream,12/04/2019,05:00,so is this test data
-12345,quickstream,test,13/04/2019,06:00,yup
-12345,test,quickstream,14/04/2019,07:00,phew
-12346,quickstream,admin,15/04/2019,08:00,sup
-12346,admin,quickstream,16/04/2019,09:00,you ok?
-12346,quickstream,admin,17/04/2019,10:00,busy but good
-12346,admin,quickstream,18/04/2019,11:00,cool
-12346,quickstream,admin,19/04/2019,12:00,just making test data
-12346,admin,quickstream,20/04/2019,13:00,sweet
-12346,quickstream,admin,21/04/2019,14:00,not really
-12346,admin,quickstream,22/04/2019,15:00,well glad I can help
-12346,quickstream,admin,23/04/2019,16:00,thank you
-12347,admin,test,24/04/2019,17:00,quickstream cant read this
-12347,test,admin,25/04/2019,18:00,really?
-12347,admin,test,26/04/2019,19:00,yeh
-12347,test,admin,27/04/2019,20:00,how do you know?
-12347,admin,test,28/04/2019,21:00,because he isnt in this chat
-12347,test,admin,29/04/2019,22:00,"oh, makes sense"
+msgID,chatID,To,From,Date,Time,Data
+msg01,12345,quickstream,test,26/03/2019,12:00,hi
+msg02,12345,test,quickstream,27/03/2019,13:00,hey
+msg03,12345,quickstream,test,28/03/2019,14:00,you ok?
+msg04,12345,test,quickstream,29/03/2019,15:00,im good
+msg05,12345,quickstream,test,30/03/2019,16:00,busy?
+msg06,12345,test,quickstream,31/03/2019,17:00,no
+msg07,12345,quickstream,test,01/04/2019,18:00,can you help me?
+msg08,12345,test,quickstream,02/04/2019,19:00,yes
+msg09,12345,quickstream,test,03/04/2019,20:00,I want to test my chat
+msg10,12345,test,quickstream,04/04/2019,21:00,I can do that
+msg11,12345,quickstream,test,05/04/2019,22:00,thank you
+msg12,12345,test,quickstream,06/04/2019,23:00,what do I need to do
+msg13,12345,quickstream,test,07/04/2019,00:00,just keep replying
+msg14,12345,test,quickstream,08/04/2019,01:00,is that it?
+msg15,12345,quickstream,test,09/04/2019,02:00,yeh
+msg16,12345,test,quickstream,10/04/2019,03:00,wow easy
+msg17,12345,quickstream,test,11/04/2019,04:00,I know
+msg18,12345,test,quickstream,12/04/2019,05:00,so is this test data
+msg19,12345,quickstream,test,13/04/2019,06:00,yup
+msg20,12345,test,quickstream,14/04/2019,07:00,phew
+msg21,12346,quickstream,admin,15/04/2019,08:00,sup
+msg22,12346,admin,quickstream,16/04/2019,09:00,you ok?
+msg23,12346,quickstream,admin,17/04/2019,10:00,busy but good
+msg24,12346,admin,quickstream,18/04/2019,11:00,cool
+msg25,12346,quickstream,admin,19/04/2019,12:00,just making test data
+msg26,12346,admin,quickstream,20/04/2019,13:00,sweet
+msg27,12346,quickstream,admin,21/04/2019,14:00,not really
+msg28,12346,admin,quickstream,22/04/2019,15:00,well glad I can help
+msg29,12346,quickstream,admin,23/04/2019,16:00,thank you
+msg30,12347,admin,test,24/04/2019,17:00,quickstream cant read this
+msg31,12347,test,admin,25/04/2019,18:00,really?
+msg32,12347,admin,test,26/04/2019,19:00,yeh
+msg33,12347,test,admin,27/04/2019,20:00,how do you know?
+msg34,12347,admin,test,28/04/2019,21:00,because he isnt in this chat
+msg35,12347,test,admin,29/04/2019,22:00,"oh, makes sense"
