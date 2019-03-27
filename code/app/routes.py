@@ -25,7 +25,7 @@ def test_connect():
     with thread_lock:
         if thread is None:
             thread = socketio.start_background_task(background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0})
+    emit('my_response', {'data': 'Connected', 'count': 0, 'current_user': session['username']})
 
 
 @socketio.on('disconnect', namespace='/test')
@@ -39,14 +39,15 @@ def background_thread():
         socketio.sleep(10)
         count += 1
         socketio.emit('my_response',
-                      {'data': 'Server generated event 2', 'count': count},
+                      {'data': 'Server generated event', 'count': count},
                       namespace='/test')
 
 @app.route('/')
 @app.route('/index')
 def index():
     if 'username' in session:
-        return render_template('index2.html')
+        print(session['username'])
+        return render_template('index2.html', current_user='test')
     
     return render_template('login.html', \
                            Form='login-form', \
@@ -70,7 +71,9 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session['username'] = ''
+    print(session['username'])
+    print("here here")
+    session.pop('username')
     return render_template('login.html', \
                            Form='login-form', \
                            altForm='register-form', \

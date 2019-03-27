@@ -54,13 +54,13 @@ $("#status-options ul li").click(function() {
             // The callback function is invoked when a connection with the
             // server is established.
             socket.on('connect', function() {
-                socket.emit('my_event', {data: 'I\'m connected!'});
+                socket.emit('myConnect', {data: ('#yourUsername').text});
             });
 
 
             socket.on('my_response', function(msg) {
 				if(msg.username == null){
-					console.log('Received #' + msg.count + ' : ' + msg.data);
+					console.log('Received #' + msg.count + ' : ' + msg.data + ', username: ' + msg.current_user);
 				}else{
 					if(activeUser == msg.username){
 						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
