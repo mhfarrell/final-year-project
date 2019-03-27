@@ -1,4 +1,5 @@
 import os
+from threading import Lock
 from flask import Flask, render_template, request, redirect, url_for, session
 from app import app
 import bcrypt
@@ -7,10 +8,39 @@ from pymongo import MongoClient
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
 
+print("routes")
+async_mode = None
 c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
 db= c.chatdatabase
 #make this a hashed version of something unique to the user
 app.secret_key = 'shush_its_secret'
+socketio = SocketIO(app, async_mode=async_mode)
+thread = None
+thread_lock = Lock()
+print("loaded header")
+
+@socketio.on('connect', namespace='/test')
+def test_connect():
+    global thread
+    with thread_lock:
+        if thread is None:
+            thread = socketio.start_background_task(background_thread)
+    emit('my_response', {'data': 'Connected', 'count': 0})
+
+
+@socketio.on('disconnect', namespace='/test')
+def test_disconnect():
+    print('Client disconnected', request.sid)
+
+def background_thread():
+    """Example of how to send server generated events to clients."""
+    count = 0
+    while True:
+        socketio.sleep(10)
+        count += 1
+        socketio.emit('my_response',
+                      {'data': 'Server generated event 2', 'count': count},
+                      namespace='/test')
 
 @app.route('/')
 @app.route('/index')
@@ -63,29 +93,6 @@ def register():
                            altForm='login-form', \
                            Form='register-form', \
                            registerMessage='Sorry that username already exists')
-
-@socketio.on('connect', namespace='/test')
-def test_connect():
-    global thread
-    with thread_lock:
-        if thread is None:
-            thread = socketio.start_background_task(background_thread)
-    emit('my_response', {'data': 'Connected', 'count': 0})
-
-
-@socketio.on('disconnect', namespace='/test')
-def test_disconnect():
-    print('Client disconnected', request.sid)
-
-def background_thread():
-    """Example of how to send server generated events to clients."""
-    count = 0
-    while True:
-        socketio.sleep(10)
-        count += 1
-        socketio.emit('my_response',
-                      {'data': 'Server generated event 2', 'count': count},
-                      namespace='/test')
 
 
 @socketio.on('join', namespace='/test')
