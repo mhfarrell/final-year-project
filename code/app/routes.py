@@ -4,7 +4,8 @@ from app import app
 import bcrypt
 import sys, getopt, pprint
 from pymongo import MongoClient
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room, \
+    close_room, rooms, disconnect
 
 c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
 db= c.chatdatabase
@@ -15,7 +16,7 @@ app.secret_key = 'shush_its_secret'
 @app.route('/index')
 def index():
     if 'username' in session:
-        return render_template('index.html')
+        return render_template('index2.html')
     
     return render_template('login.html', \
                            Form='login-form', \
@@ -31,7 +32,7 @@ def login():
         if loginUser:
             if hashPass == loginUser['password']:
                 session['username'] = request.form['username']
-                return render_template('index.html')
+                return render_template('index2.html')
     return render_template('login.html', \
                            Form='login-form', \
                            altForm='register-form', \
@@ -56,25 +57,66 @@ def register():
             hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
             users.insert({'username' : request.form['username'], 'password' : hashPass, 'firstName' : request.form['firstname'], 'surname' : request.form['surname'], 'email' : request.form['email'], 'company' : request.form['company']})
             session['username'] = request.form['username']
-            return render_template('index.html')
+            return render_template('index2.html')
         
     return render_template('login.html', \
                            altForm='login-form', \
                            Form='register-form', \
                            registerMessage='Sorry that username already exists')
 
-@socketio.on('my event', namespace='/test')
-def test_message(message):
-    emit('my response', {'data': message['data']})
-
-@socketio.on('my broadcast event', namespace='/test')
-def test_message(message):
-    emit('my response', {'data': message['data']}, broadcast=True)
-
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    emit('my response', {'data': 'Connected'})
+    global thread
+    with thread_lock:
+        if thread is None:
+            thread = socketio.start_background_task(background_thread)
+    emit('my_response', {'data': 'Connected', 'count': 0})
+
 
 @socketio.on('disconnect', namespace='/test')
 def test_disconnect():
-    print('Client disconnected')
+    print('Client disconnected', request.sid)
+
+def background_thread():
+    """Example of how to send server generated events to clients."""
+    count = 0
+    while True:
+        socketio.sleep(10)
+        count += 1
+        socketio.emit('my_response',
+                      {'data': 'Server generated event 2', 'count': count},
+                      namespace='/test')
+
+
+@socketio.on('join', namespace='/test')
+def join(message):
+    join_room(message['room'])
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response',
+         {'data': 'Joined Room: ' + ', '.join(rooms()),
+          'count': session['receive_count']})
+
+
+@socketio.on('leave', namespace='/test')
+def leave(message):
+    leave_room(message['room'])
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response',
+         {'data': 'Left Room: ' + ', '.join(rooms()),
+          'count': session['receive_count']})
+
+
+@socketio.on('sendMessage', namespace='/test')
+def send_room_message(message):
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response',
+         {'data': message['data'], 'username': message['username'], 'count': session['receive_count']},
+         room=message['room'])
+
+
+@socketio.on('disconnect_request', namespace='/test')
+def disconnect_request():
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    emit('my_response',
+         {'data': 'Disconnected!', 'count': session['receive_count']})
+    disconnect()
