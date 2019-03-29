@@ -1,3 +1,6 @@
 
 *.pyc
 code/__pycache__/chat.cpython-36.pyc
+code/app/__pycache__/__init__.cpython-36.pyc
+code/app/__pycache__/database.cpython-36.pyc
+code/app/__pycache__/routes.cpython-36.pyc
