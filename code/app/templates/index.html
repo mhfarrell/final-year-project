@@ -29,32 +29,43 @@
 						<ul>
 							<li class="contact active">
 								<form id="contact" method="POST" action='#'>
-								<div class="wrap">
-									<!-- get status from get request -->					
-									<span class="contact-status online"></span>
-									<!-- get profile picture from get request -->
-									<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
-									<div class="meta">
-										<!-- get contact name from get request -->
-										<p id="userOne" class="name">Contact One</p>
-										<!-- get last message in chat from get request -->
-										<p class="preview">Last message in chat</p>
-										<input type="submit" id="roomSub" value="Join Room">
+									<div class="wrap">
+										<!-- get status from get request -->					
+										<span class="contact-status online"></span>
+										<!-- get profile picture from get request -->
+										<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
+										<div class="meta">
+											<!-- get contact name from get request -->
+											<p id="userOne" class="name">Contact One</p>
+											<!-- get last message in chat from get request -->
+											<p class="preview">Last message in chat</p>
+											<input type="submit" id="roomSub" value="Join Room">
+										</div>
 									</div>
-								</div>
 								</form>
 							</li>
+
+							{% for chats in chats -%}
+							
 							<li class="contact">
-								<div class="wrap">
-									<span class="contact-status online"></span>
-									<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
-									<div class="meta">
-										<p class="name">Contact Two</p>
-										<p class="preview">Last message in chat</p>
+								<form id="{{chats['chatID']}}" method="POST" action='#'>
+									<div class="wrap">
+										<!-- get status from get request -->					
+										<span class="contact-status online"></span>
+										<!-- get profile picture from get request -->
+										<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
+										<div class="meta">
+											<!-- get contact name from get request -->
+											<p id="userOne" class="name">{{chats['To']}}</p>
+											<!-- get last message in chat from get request -->
+											<p class="preview">{{chats['To']}}: {{chats['Data']}}</p>
+											<input type="submit" id="{{chats['chatID']}}Sub" value="Join Room">
+										</div>
 									</div>
-								</div>
+								</form>
 							</li>
 							
+							{%- endfor %}							
 							<!--example
 							"contact-status online" -- online
 							"contact-status away" -- away
