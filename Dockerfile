@@ -1,0 +1,8 @@
+FROM python:3.6.4
+MAINTAINER Matt Farrell "matthew.farrell@students.plymouth.ac.uk"
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+ENV FLASK_APP="./code/chat.py"
+CMD ["flask", "run"]
+
