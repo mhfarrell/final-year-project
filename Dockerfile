@@ -4,5 +4,5 @@ COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 ENV FLASK_APP="./code/chat.py"
-CMD ["flask", "run"]
+CMD ["flask", "run", "--host", "0.0.0.0"]
 
