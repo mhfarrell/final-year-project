@@ -47,7 +47,7 @@ def background_thread():
 def index():
     if 'username' in session:
         print(session['username'])
-        return render_template('index2.html', current_user=session['username'])
+        return render_template('index.html', current_user=session['username'])
     
     return render_template('login.html', \
                            Form='login-form', \
@@ -64,7 +64,7 @@ def login():
             if hashPass == loginUser['password']:
                 session['username'] = request.form['username']
                 print(session['username'])
-                return render_template('index2.html', current_user=session['username'])
+                return render_template('index.html', current_user=session['username'])
 
     return render_template('login.html', \
                            Form='login-form', \
@@ -92,7 +92,7 @@ def register():
             hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
             users.insert({'username' : request.form['username'], 'password' : hashPass, 'firstName' : request.form['firstname'], 'surname' : request.form['surname'], 'email' : request.form['email'], 'company' : request.form['company']})
             session['username'] = request.form['username']
-            return render_template('index2.html')
+            return render_template('index.html')
         
     return render_template('login.html', \
                            altForm='login-form', \

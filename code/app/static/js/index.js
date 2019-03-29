@@ -1,6 +1,3 @@
-WEB_SOCKET_SWF_LOCATION = "/js/WebSocketMain.swf";
-ws_init("ws://localhost:8888/ws_channel");
-
 $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
 $("#profile-img").click(function() {
@@ -35,55 +32,86 @@ $("#status-options ul li").click(function() {
 	$("#status-options").removeClass("active");
 });
 
-function ws_init(url) {
+        $(document).ready(function() {
+			console.log("open");
+            // Use a "/test" namespace.
+            // An application can open a connection on multiple namespaces, and
+            // Socket.IO will multiplex all those connections on a single
+            // physical channel. If you don't care about multiple channels, you
+            // can set the namespace to an empty string.
+            namespace = '/test';
+			var activeRoom = null;
+			var activeUser = null;
 
-	console.log("connecting to: " + url + "...");
-	ws = new WebSocket(url);
-	ws.onopen = function(){	
-			console.log("Connection established");
-		};
-	ws.onmessage = function(msg){
-			var jsonMsg= JSON.parse(msg.data);
-			newMessage(jsonMsg.username, jsonMsg.message);
-		};
-	ws.onclose = function(){
-			console.log("Connection closed");
-		}
-
-};
-
-function ws_send(user, msg){
-	//form message into json string
-	var msgText = '{"chatID": "1","username":"' + user + '" , "message":"' + msg + '"}';
-	//send json to web socket
-	ws.send(msgText);
-};
-
-function ws_close(){
-	ws.close();
-};
+            // Connect to the Socket.IO server.
+            // The connection URL has the following format:
+            //     http[s]://<domain>:<port>[/<namespace>]
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+			console.log(socket);
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('myConnect', {data: ('#yourUsername').text});
+            });
 
 
-function newMessage(user, msg) {
-	if($.trim(msg) == '') {
-		return false;
-	}
-	if($('.contact-profile input').val() == user){
-		$('<li class="sent"><img src="images/placeholder.png" alt="" /><p>' + msg + '</p></li>').appendTo($('.messages ul'));
-		$('.message-input input').val(null);
-		$('.contact.active .preview').html('<span>' + user +': </span>' + msg);
-		$(".messages").animate({ scrollTop: $(document).height() }, "fast");
-	}else{
-		$('<li class="replies"><img src="images/placeholder.png" alt="" /><p>' + msg + '</p></li>').appendTo($('.messages ul'));
-		$('.contact.active .preview').html('<span>' + user +': </span>' + msg);
-		$(".messages").animate({ scrollTop: $(document).height() }, "fast");
-	}
-};
-
-$('.submit').click(function() {
-
-  ws_send($('.contact-profile input').val(),$('.message-input input').val());
-});
+            socket.on('my_response', function(msg) {
+				if(msg.username == null){
+					console.log('Received #' + msg.count + ' : ' + msg.data);
+				}else{
+					if(activeUser == msg.username){
+						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
+						$('.message-input input').val(null);
+						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
+						$(".messages").animate({ scrollTop: $(document).height() }, "fast");		
+					}else{
+						$('<li class="replies"><img src="/static/images/placeholder.png" alt="" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
+						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
+						$(".messages").animate({ scrollTop: $(document).height() }, "fast");
+					}
+				}
+            });
+			
+			//
+			//individual user chats
+			//
+			//
+            $('form#contact').submit(function(event) {
+				if (activeRoom == null){
+					socket.emit('join', {room: $('#userOne').text()});
+					console.log('joined ' + $('#userOne').text());			
+					activeRoom = $('#userOne').text();
+					activeUser = $('#yourUsername').text();
+					console.log("welcome: " + activeUser);
+					return false;
+				}else{
+					console.log('Leaving ' + activeRoom);
+					socket.emit('leave', {room: activeRoom});
+					$('#log').append('<br>' + $('<div/>').text('Goodbye: ' + activeUser).html());
+					activeUser = null;
+					activeRoom = null;					
+					return false;
+				}				
+            });
+			//
+			//
+			//individual user chats
+			//
+			
+            $('form#sendMessage').submit(function(event) {
+				console.log($('#roomMessage').val());
+                socket.emit('sendMessage', {room: activeRoom, data: $('#roomMessage').val(), username: activeUser});
+				$("#roomMessage").prop("value", "");
+                return false;
+            });
+			
+			//part of logout code
+            $('form#disconnect').submit(function(event) {
+                socket.emit('disconnect_request');
+                return false;
+            });
+        });
 
 $(window).on('keydown', function(e) {
   if (e.which == 13) {
