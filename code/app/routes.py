@@ -8,7 +8,6 @@ from pymongo import MongoClient
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
 
-print("routes")
 async_mode = None
 c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
 db= c.chatdatabase
@@ -17,11 +16,17 @@ app.secret_key = 'shush_its_secret'
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
-print("loaded header")
 
-def loadChat():
+def loadContact():
     myQuery = { '$or': [ { 'To': session['username'] }, { 'From': session['username'] } ] }
     return db.chat.distinct('chatID', myQuery)
+#use myQuery,
+#if statement on each chatID to find other user using session['username']
+#return custom string of chatID, last message (to or from), date/time and contact
+
+def loadChat():
+    myQuery = {}
+    return myQuery
 
 
 @socketio.on('connect', namespace='/test')
@@ -54,7 +59,7 @@ def index():
         print(session['username'])
         return render_template('index.html',\
                                current_user=session['username'],\
-                               chats=loadChat())
+                               chats=loadContact())
 
     return render_template('login.html', \
                            Form='login-form', \
@@ -73,7 +78,7 @@ def login():
                 print(session['username'])
                 return render_template('index.html',\
                                        current_user=session['username'],\
-                                       chats=loadChat())
+                                       chats=loadContact())
 
     return render_template('login.html', \
                            Form='login-form', \
@@ -103,7 +108,7 @@ def register():
             session['username'] = request.form['username']
             return render_template('index.html',\
                                    current_user=session['username'],\
-                                   chats=loadChat())
+                                   chats=loadContact())
         
     return render_template('login.html', \
                            altForm='login-form', \

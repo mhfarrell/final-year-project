@@ -1,4 +1,4 @@
-FROM python:3.6.4
+FROM python:3.7.2
 MAINTAINER Matt Farrell "matthew.farrell@students.plymouth.ac.uk"
 COPY . /app
 WORKDIR /app
