@@ -13,7 +13,7 @@ print("Loaded DB")
 
 def popDB():
     db.chat.drop()
-    header= [ "msgID", "chatID", "recipient", "sender", "date", "time", "data"]
+    header= [ "msgID", "chatID", "recipient", "sender", "datetime", "data"]
 
     for each in reader:
         row={}
