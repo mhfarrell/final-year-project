@@ -64,11 +64,11 @@ $("#status-options ul li").click(function() {
 						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
 						$('.message-input input').val(null);
 						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
-						$(".messages").animate({ scrollTop: $(document).height() }, "fast");		
+						$(".messages").animate({ scrollTop: $(document).height() }, "fast");						
 					}else{
 						$('<li class="replies"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
 						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
-						$(".messages").animate({ scrollTop: $(document).height() }, "fast");
+						$(".messages").animate({ scrollTop: $(document).height() }, "fast");							
 					}
 				}
             });
@@ -82,7 +82,7 @@ $("#status-options ul li").click(function() {
 					socket.emit('join', {room: $('#chatOne').text(), username: activeUser});
 					//username: $('#userOne').text(), room: $('#chatOne').val()
 					console.log('joined ' + $('#userOne').text());			
-					activeRoom = $('#userOne').text();
+					activeRoom = $('#chatOne').text();
 					activeUser = $('#yourUsername').text();
 					console.log("welcome: " + activeUser);
 					$("#roomSub").prop('value', 'Leave Room');
@@ -104,7 +104,7 @@ $("#status-options ul li").click(function() {
 			//
 			
             $('form#sendMessage').submit(function(event) {
-				console.log($('#roomMessage').val());
+				console.log('room: ' + activeRoom + ', username: ' + activeUser);
                 socket.emit('sendMessage', {room: activeRoom, data: $('#roomMessage').val(), username: activeUser});
 				$("#roomMessage").prop("value", "");
                 return false;
@@ -116,10 +116,3 @@ $("#status-options ul li").click(function() {
                 return false;
             });
         });
-
-$(window).on('keydown', function(e) {
-  if (e.which == 13) {
-    ws_send($('.contact-profile input').val(),$('.message-input input').val());
-    return false;
-  }
-});

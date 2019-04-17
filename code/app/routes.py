@@ -147,7 +147,10 @@ def leave(message):
 @socketio.on('sendMessage', namespace='/test')
 def send_room_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
-    #add new message to db
+    emit('my_response',
+         {'data': 'testing message: ' + ', ' + message['data'],
+          'count': session['receive_count']})
+    
     emit('my_response',
          {'data': message['data'], 'username': message['username'], 'count': session['receive_count']},
          room=message['room'])
