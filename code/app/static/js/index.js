@@ -61,12 +61,12 @@ $("#status-options ul li").click(function() {
 					console.log('Received #' + msg.count + ' : ' + msg.data);
 				}else{
 					if(activeUser == msg.username){
-						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
+						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
 						$('.message-input input').val(null);
 						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
 						$(".messages").animate({ scrollTop: $(document).height() }, "fast");		
 					}else{
-						$('<li class="replies"><img src="/static/images/placeholder.png" alt="" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
+						$('<li class="replies"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
 						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
 						$(".messages").animate({ scrollTop: $(document).height() }, "fast");
 					}
@@ -79,18 +79,22 @@ $("#status-options ul li").click(function() {
 			//
             $('form#contact').submit(function(event) {
 				if (activeRoom == null){
-					socket.emit('join', {room: $('#userOne').text()});
+					socket.emit('join', {room: $('#chatOne').text(), username: activeUser});
+					//username: $('#userOne').text(), room: $('#chatOne').val()
 					console.log('joined ' + $('#userOne').text());			
 					activeRoom = $('#userOne').text();
 					activeUser = $('#yourUsername').text();
 					console.log("welcome: " + activeUser);
+					$("#roomSub").prop('value', 'Leave Room');
 					return false;
 				}else{
 					console.log('Leaving ' + activeRoom);
 					socket.emit('leave', {room: activeRoom});
 					$('#log').append('<br>' + $('<div/>').text('Goodbye: ' + activeUser).html());
 					activeUser = null;
-					activeRoom = null;					
+					activeRoom = null;
+					$("#roomSub").prop('value', 'Join Room');
+					$("#chatMsg").empty();
 					return false;
 				}				
             });

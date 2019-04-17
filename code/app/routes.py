@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from app import app
 import bcrypt
 import sys, getopt, pprint
+import pymongo
 from pymongo import MongoClient
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
@@ -18,11 +19,15 @@ thread = None
 thread_lock = Lock()
 
 def loadContact():
-    myQuery = { '$or': [ { 'To': session['username'] }, { 'From': session['username'] } ] }
-    return db.chat.distinct('chatID', myQuery)
-#use myQuery,
-#if statement on each chatID to find other user using session['username']
-#return custom string of chatID, last message (to or from), date/time and contact
+    myQuery = { '$or': [ { 'recipient': session['username'] }, { 'sender': session['username'] } ] }
+    cursor = db.chat.distinct('chatID', myQuery)
+    
+    chats = []
+    for doc in cursor:
+        cursor2 = db.chat.find({"chatID" : doc}, limit = 1).sort([('date',  pymongo.ASCENDING), ('time', pymongo.ASCENDING)])
+        chats.append(cursor2)
+    return chats
+
 
 def loadChat():
     myQuery = {}
@@ -123,7 +128,12 @@ def join(message):
     emit('my_response',
          {'data': 'Joined Room: ' + ', '.join(rooms()),
           'count': session['receive_count']})
-
+    myQuery = {'chatID' : message['room']}
+    cursor = db.chat.find(myQuery)
+    for doc in cursor:
+        emit('my_response',
+             {'data': doc['data'], 'username': doc['sender'], 'count': session['receive_count']},
+             room=message['room'])          
 
 @socketio.on('leave', namespace='/test')
 def leave(message):
