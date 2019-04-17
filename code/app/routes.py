@@ -24,7 +24,7 @@ def loadContact():
     
     chats = []
     for doc in cursor:
-        cursor2 = db.chat.find({"chatID" : doc}, limit = 1).sort([('date',  pymongo.ASCENDING), ('time', pymongo.ASCENDING)])
+        cursor2 = db.chat.find({"chatID" : doc}, limit = 1).sort([('msgID',  pymongo.DESCENDING)])
         chats.append(cursor2)
     return chats
 
@@ -132,7 +132,7 @@ def join(message):
     cursor = db.chat.find(myQuery)
     for doc in cursor:
         emit('my_response',
-             {'data': doc['data'], 'username': doc['sender'], 'count': session['receive_count']},
+             {'data': doc['data'], 'username': doc['sender'], 'datetime':doc['datetime'],'count': session['receive_count']},
              room=message['room'])          
 
 @socketio.on('leave', namespace='/test')
@@ -147,6 +147,7 @@ def leave(message):
 @socketio.on('sendMessage', namespace='/test')
 def send_room_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
+    #add new message to db
     emit('my_response',
          {'data': message['data'], 'username': message['username'], 'count': session['receive_count']},
          room=message['room'])
