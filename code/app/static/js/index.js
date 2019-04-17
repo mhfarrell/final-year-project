@@ -105,7 +105,7 @@ $("#status-options ul li").click(function() {
 			
             $('form#sendMessage').submit(function(event) {
 				console.log('room: ' + activeRoom + ', username: ' + activeUser);
-                socket.emit('sendMessage', {room: activeRoom, data: $('#roomMessage').val(), username: activeUser});
+                socket.emit('sendMessage', {room: activeRoom, data: $('#roomMessage').val(), sender: activeUser, recipient: $('#userOne').text()});
 				$("#roomMessage").prop("value", "");
                 return false;
             });

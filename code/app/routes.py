@@ -2,6 +2,7 @@ import os
 from threading import Lock
 from flask import Flask, render_template, request, redirect, url_for, session
 from app import app
+import time
 import bcrypt
 import sys, getopt, pprint
 import pymongo
@@ -150,9 +151,11 @@ def send_room_message(message):
     emit('my_response',
          {'data': 'testing message: ' + ', ' + message['data'],
           'count': session['receive_count']})
-    
+    newID = "msg" + str(db.chat.count()+1)
+    myDict = {"msgID": newID , "chatID" : message['room'], "recipient" : message['recipient'], "sender": message['sender'], "datetime": int(time.time()) , "data": message['data']}    
+    db.chat.insert_one(myDict)
     emit('my_response',
-         {'data': message['data'], 'username': message['username'], 'count': session['receive_count']},
+         {'data': message['data'], 'username': message['sender'], 'count': session['receive_count']},
          room=message['room'])
 
 
