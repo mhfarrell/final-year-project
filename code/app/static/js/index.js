@@ -89,29 +89,34 @@ $("#status-options ul li").click(function() {
 				}
 			});
 
+			function joinCode(i){
+				currentRoom = $('#chat'+i).text();
+				activeRoom = i;
+				activeUser = $('#yourUsername').text();
+				$('#curContact').text($('#user'+i).text());
+				//toggle class later
+				$('#'+i).attr('class', 'contact active');
+				socket.emit('join', {room: currentRoom, username: activeUser});
+				return;
+			}
+			
+			function leaveCode(i){
+				socket.emit('leave', {room: currentRoom});
+				$('#curContact').text(null);
+				$('#chatMsg').empty();
+				//toggle class later
+				$('#'+i).removeClass('contact active').addClass('contact');
+				return;
+			}
+			
+			//pointless but seems to not work without ?!?!
 			function roomJoin(i){
 				if (currentRoom == null){
-					//var openchat
-					//if openchat
-					//close openchat
-					//then do the rest
-					currentRoom = $('#chat'+i).text();
-					activeRoom = i;
-					activeUser = $('#yourUsername').text();
-					$('#curContact').text($('#user'+i).text());
-					//toggle class later
-					$('#'+i).attr('class', 'contact active');
-					socket.emit('join', {room: currentRoom, username: activeUser});	
+					joinCode(i);
 					return false;
-				}else{					
-					socket.emit('leave', {room: currentRoom});
-					activeUser = null;
-					activeRoom = null;
-					currentRoom = null;
-					$('#curContact').text(null);
-					$('#chatMsg').empty();
-					//toggle class later
-					$('#'+i).removeClass('contact active').addClass('contact');
+				}else{
+					leaveCode(i);
+					joinCode(i);
 					return false;
 				}
 				return;
