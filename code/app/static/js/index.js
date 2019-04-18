@@ -84,24 +84,25 @@ $("#status-options ul li").click(function() {
 			});
 
 			function roomJoin(i){
-					if (activeRoom == null){
-						socket.emit('join', {room: $('#room'+i).text(), username: activeUser});
-						console.log('joined ' + $('#user'+i).text());			
-						activeRoom = $('#chat'+i).text();
-						activeUser = $('#yourUsername').text();
-						//toggle class later
-						$('#'+i).attr('class', 'contact active');
-						return false;
-					}else{
-						console.log('Leaving ' + activeRoom);
-						socket.emit('leave', {room: activeRoom});
-						activeUser = null;
-						activeRoom = null;
-						$('#chatMsg').empty();
-						//toggle class later
-						$('#'+i).attr('class', 'contact');
-						return false;
-					}			
+				if (activeRoom == null){
+					socket.emit('join', {room: $('#room'+i).text(), username: activeUser});
+					console.log('joined ' + $('#user'+i).text());			
+					activeRoom = $('#chat'+i).text();
+					activeUser = $('#yourUsername').text();
+					//toggle class later
+					$('#'+i).attr('class', 'contact active');
+					return false;
+				}else{
+					console.log('Leaving ' + activeRoom);
+					socket.emit('leave', {room: activeRoom});
+					activeUser = null;
+					activeRoom = null;
+					$('#chatMsg').empty();
+					//toggle class later
+					$('#'+i).attr('class', 'contact');
+					return false;
+				}
+				return;
 			}
 			
 			
