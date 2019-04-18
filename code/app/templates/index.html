@@ -47,29 +47,28 @@
 							</li>
 							{% set count = 1 %}
 							{% for chats in chats -%}
-							<li class="contact">
-								<form id="{{chats[count]['chatID']}}" method="POST" action='#'>
-									<div class="wrap">
-										<!-- get status from get request -->					
-										<span class="contact-status online"></span>
-										<!-- get profile picture from get request -->
-										<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
-										<div class="meta">
-											<!-- get contact name from get request -->
-											{% if current_user == chats[count]['sender'] %}
-												<p id="userOne" class="name">{{chats[count]['recipient']}}</p>
-											{% else %}
-												<p id="userOne" class="name">{{chats[count]['sender']}}</p>
-											{% endif %}
-											<!-- get last message in chat from get request -->
-											<p class="preview">{{chats[count]['sender']}}: {{chats[count]['data']}}</p>
-											<input type="submit" id="{{chats[count]['chatID']}}Sub" value="Join Room">
-										</div>
+							<li id="{{count}}" class="contact">
+								<div class="wrap">
+									<!-- get status from get request -->					
+									<span class="contact-status online"></span>
+									<!-- get profile picture from get request -->
+									<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
+									<div class="meta">
+										<p id="room{{count}}" hidden></p>
+										<!-- get contact name from get request -->
+										{% if current_user == chats[count]['sender'] %}
+											<p id="user{{count}}" class="name">{{chats[count]['recipient']}}</p>
+										{% else %}
+											<p id="user{{count}}" class="name">{{chats[count]['sender']}}</p>
+										{% endif %}
+										<!-- get last message in chat from get request -->
+										<p class="preview">{{chats[count]['sender']}}: {{chats[count]['data']}}</p>
 									</div>
-								</form>
+								</div>
 							</li>
 							{% set count = count + 1 %}	
-							{%- endfor %}							
+							{%- endfor %}
+							<!--add something that JQuery can get counts final value-->
 							<!--example
 							"contact-status online" -- online
 							"contact-status away" -- away
@@ -111,21 +110,20 @@
 					</ul>
 				</div>
 				
-				    <form id="sendMessage" method="POST" action='#'>
-    
-				<div class="message-input">
-					<div class="wrap">
-					<input id="roomMessage" type="text" placeholder="Write your message..." />
-					<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-					<button class="submit"><i class="fa fa-send" aria-hidden="true"></i></button>
+				<form id="sendMessage" method="POST" action='#'>
+					<div class="message-input">
+						<div class="wrap">
+						<input id="roomMessage" type="text" placeholder="Write your message..." />
+						<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+						<button class="submit"><i class="fa fa-send" aria-hidden="true"></i></button>
+						</div>
 					</div>
-				</div>
-				
 				</form>
 			</div>
 		</div>
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 		<script  src="{{ url_for('static', filename='js/index.js') }}"></script>
+		<p id="chatCount" hidden>{{count}}</p>
 	</body>
 </html>

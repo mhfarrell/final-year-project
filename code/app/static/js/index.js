@@ -76,11 +76,63 @@ $("#status-options ul li").click(function() {
 			//
 			//individual user chats
 			//
-			//
+			//get count
+			//loop for count
+/* 			var i;
+			for (i = 1; i < parseInt($('#chatCount').text()); i++){
+				$('form#frm'+i).submit(function(event) {
+					if (activeRoom == null){
+						socket.emit('join', {room: $('#room'+i).text(), username: activeUser});
+						console.log('joined ' + $('#user'+i).text());			
+						activeRoom = $('#chat'+i).text();
+						activeUser = $('#yourUsername').text();
+						$("#sub"+i).prop('value', 'Leave Room');
+						return false;
+					}else{
+						console.log('Leaving ' + activeRoom);
+						socket.emit('leave', {room: activeRoom});
+						activeUser = null;
+						activeRoom = null;
+						$('#sub'+i).prop('value', 'Join Room');
+						$('#chatMsg').empty();
+						return false;
+					}				
+				});
+			} */
+			//wont work
+			$(document).on('click', function(event){
+				if($(event.target).hasClass('joinRoom')){
+					var formID = $(event.target).closest('li').attr('id');
+					roomJoin(formID);
+				}
+			});
+
+			function roomJoin(i){
+					if (activeRoom == null){
+						socket.emit('join', {room: $('#room'+i).text(), username: activeUser});
+						console.log('joined ' + $('#user'+i).text());			
+						activeRoom = $('#chat'+i).text();
+						activeUser = $('#yourUsername').text();
+						//toggle class later
+						$('#'+i).attr('class', 'contact active');
+						return false;
+					}else{
+						console.log('Leaving ' + activeRoom);
+						socket.emit('leave', {room: activeRoom});
+						activeUser = null;
+						activeRoom = null;
+						$('#chatMsg').empty();
+						//toggle class later
+						$('#'+i).attr('class', 'contact');
+						return false;
+					}			
+			}
+			
+			
+			
             $('form#contact').submit(function(event) {
 				if (activeRoom == null){
 					socket.emit('join', {room: $('#chatOne').text(), username: activeUser});
-					//username: $('#userOne').text(), room: $('#chatOne').val()
 					console.log('joined ' + $('#userOne').text());			
 					activeRoom = $('#chatOne').text();
 					activeUser = $('#yourUsername').text();
