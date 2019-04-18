@@ -123,18 +123,18 @@ def register():
 
 
 @socketio.on('join', namespace='/test')
-def join(message):
+def join(message):    
     join_room(message['room'])
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
          {'data': 'Joined Room: ' + ', '.join(rooms()),
           'count': session['receive_count']})
     myQuery = {'chatID' : message['room']}
-    cursor = db.chat.find(myQuery)
+    cursor = db.chat.find(myQuery) 
     for doc in cursor:
         emit('my_response',
              {'data': doc['data'], 'username': doc['sender'], 'datetime':doc['datetime'],'count': session['receive_count']},
-             room=message['room'])          
+             room=message['room'])
 
 @socketio.on('leave', namespace='/test')
 def leave(message):

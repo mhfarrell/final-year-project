@@ -40,6 +40,7 @@ $("#status-options ul li").click(function() {
             // physical channel. If you don't care about multiple channels, you
             // can set the namespace to an empty string.
             namespace = '/test';
+			var currentRoom = null;
 			var activeRoom = null;
 			var activeUser = null;
 
@@ -77,64 +78,49 @@ $("#status-options ul li").click(function() {
 			//individual user chats
 			//
 			$(document).on('click', function(event){
-				if($(event.target).hasClass('joinRoom')){
-					var formID = $(event.target).closest('li').attr('id');
-					roomJoin(formID);
+				var liID = $(event.target).closest('li').attr('id');
+				if($(event.target).hasClass('contact')){
+					if (activeRoom == null){						
+						roomJoin(liID);
+					}else{
+						$('#'+activeRoom).removeClass('contact active').addClass('contact');
+						roomJoin(liID);
+					}
 				}
 			});
 
 			function roomJoin(i){
-				if (activeRoom == null){
-					socket.emit('join', {room: $('#room'+i).text(), username: activeUser});
-					console.log('joined ' + $('#user'+i).text());			
-					activeRoom = $('#chat'+i).text();
+				if (currentRoom == null){
+					//var openchat
+					//if openchat
+					//close openchat
+					//then do the rest
+					currentRoom = $('#chat'+i).text();
+					activeRoom = i;
 					activeUser = $('#yourUsername').text();
+					$('#curContact').text($('#user'+i).text());
 					//toggle class later
 					$('#'+i).attr('class', 'contact active');
+					socket.emit('join', {room: currentRoom, username: activeUser});	
 					return false;
-				}else{
-					console.log('Leaving ' + activeRoom);
-					socket.emit('leave', {room: activeRoom});
+				}else{					
+					socket.emit('leave', {room: currentRoom});
 					activeUser = null;
 					activeRoom = null;
+					currentRoom = null;
+					$('#curContact').text(null);
 					$('#chatMsg').empty();
 					//toggle class later
-					$('#'+i).attr('class', 'contact');
+					$('#'+i).removeClass('contact active').addClass('contact');
 					return false;
 				}
 				return;
 			}
-			
-			
-			
-            $('form#contact').submit(function(event) {
-				if (activeRoom == null){
-					socket.emit('join', {room: $('#chatOne').text(), username: activeUser});
-					console.log('joined ' + $('#userOne').text());			
-					activeRoom = $('#chatOne').text();
-					activeUser = $('#yourUsername').text();
-					console.log("welcome: " + activeUser);
-					$("#roomSub").prop('value', 'Leave Room');
-					return false;
-				}else{
-					console.log('Leaving ' + activeRoom);
-					socket.emit('leave', {room: activeRoom});
-					$('#log').append('<br>' + $('<div/>').text('Goodbye: ' + activeUser).html());
-					activeUser = null;
-					activeRoom = null;
-					$("#roomSub").prop('value', 'Join Room');
-					$("#chatMsg").empty();
-					return false;
-				}				
-            });
-			//
-			//
-			//individual user chats
-			//
+			//semi working
 			
             $('form#sendMessage').submit(function(event) {
-				console.log('room: ' + activeRoom + ', username: ' + activeUser);
-                socket.emit('sendMessage', {room: activeRoom, data: $('#roomMessage').val(), sender: activeUser, recipient: $('#userOne').text()});
+				console.log('room: ' + currentRoom + ', username: ' + activeUser);
+                socket.emit('sendMessage', {room: currentRoom, data: $('#roomMessage').val(), sender: activeUser, recipient: $('#userOne').text()});
 				$("#roomMessage").prop("value", "");
                 return false;
             });

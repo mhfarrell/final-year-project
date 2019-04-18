@@ -27,46 +27,30 @@
 				</div>
 				<div id="contacts">					
 						<ul>
-							<li class="contact active">
-								<form id="contact" method="POST" action='#'>
-									<div class="wrap">
-										<!-- get status from get request -->					
-										<span class="contact-status online"></span>
-										<!-- get profile picture from get request -->
-										<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
-										<div class="meta">
-											<!-- get contact name from get request -->
-											<p id="userOne" class="name">test</p>
-											<p id="chatOne">12345</p>
-											<!-- get last message in chat from get request -->
-											<p class="preview">Last message in chat</p>
-											<input type="submit" id="roomSub" value="Join Room">
-										</div>
-									</div>
-								</form>
-							</li>
-							{% set count = 1 %}
 							{% for chats in chats -%}
-							<li id="{{count}}" class="contact">
+							{% if loop.index == 1 %}
+								<li id="{{loop.index}}" class="contact">
+							{% else %}
+								<li id="{{loop.index}}" class="contact">
+							{% endif %}
 								<div class="wrap">
 									<!-- get status from get request -->					
 									<span class="contact-status online"></span>
 									<!-- get profile picture from get request -->
 									<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
 									<div class="meta">
-										<p id="room{{count}}" hidden></p>
+										<p hidden id="chat{{loop.index}}">{{chats[loop.index]['chatID']}}</p>
 										<!-- get contact name from get request -->
-										{% if current_user == chats[count]['sender'] %}
-											<p id="user{{count}}" class="name">{{chats[count]['recipient']}}</p>
+										{% if current_user == chats[loop.index]['sender'] %}
+											<p id="user{{loop.index}}" class="name">{{chats[loop.index]['recipient']}}</p>
 										{% else %}
-											<p id="user{{count}}" class="name">{{chats[count]['sender']}}</p>
+											<p id="user{{loop.index}}" class="name">{{chats[loop.index]['sender']}}</p>
 										{% endif %}
 										<!-- get last message in chat from get request -->
-										<p class="preview">{{chats[count]['sender']}}: {{chats[count]['data']}}</p>
+										<p class="preview">{{chats[loop.index]['sender']}}: {{chats[loop.index]['data']}}</p>
 									</div>
 								</div>
 							</li>
-							{% set count = count + 1 %}	
 							{%- endfor %}
 							<!--add something that JQuery can get counts final value-->
 							<!--example
@@ -97,7 +81,7 @@
 			<div class="chatWindow">
 				<div class="contact-profile">
 					<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
-					<p>Contact One</p>
+					<p id="curContact"></p>
 					<input hidden id="yourUsername" type="text" value="{{ current_user }}" />
 				</div>
 				<div class="messages">
@@ -124,6 +108,5 @@
 		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 		<script  src="{{ url_for('static', filename='js/index.js') }}"></script>
-		<p id="chatCount" hidden>{{count}}</p>
 	</body>
 </html>
