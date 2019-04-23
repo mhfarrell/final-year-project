@@ -48,11 +48,7 @@
 				<div id="contacts">					
 					<ul>						
 						{% for chats in chats -%}
-						{% if loop.index == 1 %}
 							<li id="{{loop.index}}" class="contact">
-						{% else %}
-							<li id="{{loop.index}}" class="contact">
-						{% endif %}
 							<div class="wrap">					
 								<span class="contact-status online"></span>
 								<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
