@@ -33,7 +33,7 @@ $("#status-options ul li").click(function() {
 });
 
 $('#addcontact').click(function(){
-	$('form, .contactTog').animate({height: "toggle", opacity: "toggle"}, "slow");
+	$('.sideMenu').animate({height: "toggle", opacity: "toggle"}, "slow");
 	if ($("#addcontact span").text() == 'Chats'){
 		$("#addcontact span").text('Add Contact');
 		$("#addcontact i").removeClass();
