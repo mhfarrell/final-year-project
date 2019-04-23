@@ -32,6 +32,19 @@ $("#status-options ul li").click(function() {
 	$("#status-options").removeClass("active");
 });
 
+$('#addcontact').click(function(){
+	$('form, .contactTog').animate({height: "toggle", opacity: "toggle"}, "slow");
+	if ($("#addcontact span").text() == 'Chats'){
+		$("#addcontact span").text('Add Contact');
+		$("#addcontact i").removeClass();
+		$("#addcontact i").addClass("fa fa-user-plus fa-fw");		
+	}else{
+		$("#addcontact span").text('Chats');
+		$("#addcontact i").removeClass();
+		$("#addcontact i").addClass("fa fa-comments-o fa-fw");
+	}
+});	
+
         $(document).ready(function() {
 			console.log("open");
             // Use a "/test" namespace.
@@ -64,11 +77,11 @@ $("#status-options ul li").click(function() {
 					if(activeUser == msg.username){
 						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
 						$('.message-input input').val(null);
-						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
+						$('.contact.active .preview').html('<i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>' + msg.username +': </span>' + msg.data);
 						$(".messages").animate({ scrollTop: $(document).height() }, "fast");						
 					}else{
 						$('<li class="replies"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
-						$('.contact.active .preview').html('<span>' + msg.username +': </span>' + msg.data);
+						$('.contact.active .preview').html('<i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>' + msg.username +': </span>' + msg.data);
 						$(".messages").animate({ scrollTop: $(document).height() }, "fast");							
 					}
 				}
@@ -125,7 +138,7 @@ $("#status-options ul li").click(function() {
 			
             $('form#sendMessage').submit(function(event) {
 				console.log('room: ' + currentRoom + ', username: ' + activeUser);
-                socket.emit('sendMessage', {room: currentRoom, data: $('#roomMessage').val(), sender: activeUser, recipient: $('#userOne').text()});
+                socket.emit('sendMessage', {room: currentRoom, data: $('#roomMessage').val(), sender: activeUser, recipient: $('#user'+activeRoom).text()});
 				$("#roomMessage").prop("value", "");
                 return false;
             });

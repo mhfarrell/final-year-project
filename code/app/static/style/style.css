@@ -357,6 +357,8 @@ body {
 #frame #sidebar.expanded {
   height: calc(100% - 334px);
 }
+
+
 #frame #sidebar #search {
 	border-top: 1px solid #505050;
 	border-bottom: 1px solid #505050;
@@ -699,4 +701,8 @@ body {
 }
 #frame .chatWindow .message-input .wrap button:focus {
   outline: none;
+}
+/*Contact Toggle*/
+#contactTog .contactForm {
+  display: none;
 }
