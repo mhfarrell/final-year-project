@@ -31,19 +31,20 @@ def loadChat():
 
 
 def loadContact(search):
+    print('search text is: ' + search)
     myQuery = {'username' : {'$ne' : session['username']},
-           '$or' : [
+           '$and' : [{'$or' : [
                  {'username' : {'$regex' : search, '$options': 'i'}},
                  {'surname' : {'$regex' : search, '$options': 'i'}},
                  {'firstName' : {'$regex' : search, '$options': 'i'}},
                  {'email' : {'$regex' : search, '$options': 'i'}},
-                 {'company' : {'$regex' : search, '$options': 'i'}}]}
+                 {'company' : {'$regex' : search, '$options': 'i'}}]}]}
     cursor = db.users.find(myQuery)
     payload = []
     content = {}
-    #print(cursor[0]['username'])
     for doc in cursor:
-        content = {'username' : cursor[0], 'firstName' : cursor[1]}
+        print('username is: ' + doc['username'])
+        content = {'username' : doc['username']}
         payload.append(content)
         
     return payload
