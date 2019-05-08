@@ -22,13 +22,15 @@
 			</div>
 			<div id="sidebar">
 			
-			<form class="sideMenu" style="display: none;">
-				<div id="search">
+			<form id="contactSearch" class="sideMenu" style="display: none;">
+				<div class="search">
 					<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-					<input type="text" placeholder="Search For contacts..." />
+					<input type="text" id="contSearch" placeholder="Search For contacts..." />
 				</div>
-				<div id="contacts">					
-					<ul>						
+				<div class="contacts">					
+					<ul>
+	<div id="successAlert" class="alert alert-success" role="alert" style="display:none;"></div>
+	<div id="errorAlert" class="alert alert-danger" role="alert" style="display:none;"></div>					
 						<!--<li class="contact">
 							<div class="wrap">					
 								<img id="profile-img" src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
@@ -41,11 +43,11 @@
 				</div>
 			</form>
 			<form class="sideMenu">
-				<div id="search">
+<!-- 				<div class="search">
 					<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-					<input type="text" placeholder="Search Chat Contacts..." />
-				</div>
-				<div id="contacts">					
+					<input type="text" id="chatSearch" placeholder="Search Chat Contacts..." />
+				</div> -->
+				<div class="contacts">					
 					<ul>						
 						{% for chats in chats -%}
 							<li id="{{loop.index}}" class="contact">

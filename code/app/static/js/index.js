@@ -36,12 +36,12 @@ $('#addcontact').click(function(){
 	$('.sideMenu').animate({height: "toggle", opacity: "toggle"}, "slow");
 	if ($("#addcontact span").text() == 'Chats'){
 		$("#addcontact span").text('Add Contact');
-		$("#addcontact i").removeClass();
-		$("#addcontact i").addClass("fa fa-user-plus fa-fw");		
+		$("#addcontact").removeClass();
+		$("#addcontact").addClass("fa fa-user-plus fa-fw");		
 	}else{
 		$("#addcontact span").text('Chats');
-		$("#addcontact i").removeClass();
-		$("#addcontact i").addClass("fa fa-comments-o fa-fw");
+		$("#addcontact").removeClass();
+		$("#addcontact").addClass("fa fa-comments-o fa-fw");
 	}
 });	
 
@@ -68,7 +68,6 @@ $('#addcontact').click(function(){
             socket.on('connect', function() {
                 socket.emit('myConnect', {data: ('#yourUsername').text});
             });
-
 
             socket.on('my_response', function(msg) {
 				if(msg.username == null){
@@ -135,6 +134,42 @@ $('#addcontact').click(function(){
 				return;
 			}
 			//semi working
+			
+			document.getElementById('contactSearch').onkeydown = function(e){
+				if(e.keyCode == 13){
+					console.log('ajax');
+					$.ajax({
+						data : {
+							name : $('#yourUsername').text(),
+							search : $('#contSearch').val()
+						},
+						type : 'POST',
+						url : '/search'
+						})
+							.done(function(data) {
+						console.log('after ajax');
+						if (data.error) {
+							console.log(data.error)
+						}
+						else {
+							console.log(data);
+							for(i in data){
+								console.log(i);
+							console.log(data[i].username);
+							}
+						}
+					});
+					$("#contSearch").prop("value", "");
+					event.preventDefault();
+				}			   
+			};
+
+/* 			document.getElementById('chatSearch').onkeydown = function(e){
+				if(e.keyCode == 13){
+					event.preventDefault();	
+				}			   
+			}; */
+			
 			
             $('form#sendMessage').submit(function(event) {
 				console.log('room: ' + currentRoom + ', username: ' + activeUser);

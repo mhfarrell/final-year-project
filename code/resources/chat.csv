@@ -1,36 +1,13 @@
 msgID,chatID,recipient,sender,datetime,data
-msg01,12345,quickstream,test,1555518278,hi
-msg02,12345,test,quickstream,1555518279,hey
-msg03,12345,quickstream,test,1555518280,you ok?
-msg04,12345,test,quickstream,1555518281,im good
-msg05,12345,quickstream,test,1555518282,busy?
-msg06,12345,test,quickstream,1555518283,no
-msg07,12345,quickstream,test,1555518284,can you help me?
-msg08,12345,test,quickstream,1555518285,yes
-msg09,12345,quickstream,test,1555518286,I want to test my chat
-msg10,12345,test,quickstream,1555518287,I can do that
-msg11,12345,quickstream,test,1555518288,thank you
-msg12,12345,test,quickstream,1555518289,what do I need to do
-msg13,12345,quickstream,test,1555518290,just keep replying
-msg14,12345,test,quickstream,1555518291,is that it?
-msg15,12345,quickstream,test,1555518292,yeh
-msg16,12345,test,quickstream,1555518293,wow easy
-msg17,12345,quickstream,test,1555518294,I know
-msg18,12345,test,quickstream,1555518295,so is this test data
-msg19,12345,quickstream,test,1555518296,yup
-msg20,12345,test,quickstream,1555518297,phew
-msg21,12346,quickstream,admin,1555518298,sup
-msg22,12346,admin,quickstream,1555518299,you ok?
-msg23,12346,quickstream,admin,1555518300,busy but good
-msg24,12346,admin,quickstream,1555518301,cool
-msg25,12346,quickstream,admin,1555518302,just making test data
-msg26,12346,admin,quickstream,1555518303,sweet
-msg27,12346,quickstream,admin,1555518304,not really
-msg28,12346,admin,quickstream,1555518305,well glad I can help
-msg29,12346,quickstream,admin,1555518306,thank you
-msg30,12347,admin,test,1555518307,quickstream cant read this
-msg31,12347,test,admin,1555518308,really?
-msg32,12347,admin,test,1555518309,yeh
-msg33,12347,test,admin,1555518310,how do you know?
-msg34,12347,admin,test,1555518311,because he isnt in this chat
-msg35,12347,test,admin,1555518312,"oh, makes sense"
+msg01,12345,quickstream,test,1555518278,13243-21174
+msg02,12345,test,quickstream,1555518279,13243-21174
+msg03,12345,quickstream,test,1555518278,13243-21174
+msg04,12345,test,quickstream,1555518279,13243-21174
+msg05,12346,quickstream,admin,1555518298,13243-40117-39171-39171-34725
+msg06,12346,admin,quickstream,1555518299,13243-40117-39171-39171-34725
+msg07,12346,quickstream,admin,1555518298,13243-40117-39171-39171-34725
+msg08,12346,admin,quickstream,1555518299,13243-40117-39171-39171-34725
+msg09,12347,admin,test,1555518307,17248-6091-3280
+msg10,12347,test,admin,1555518308,17248-6091-3280
+msg11,12347,admin,test,1555518307,17248-6091-3280
+msg12,12347,test,admin,1555518308,17248-6091-3280

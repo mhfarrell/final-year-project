@@ -359,24 +359,24 @@ body {
 }
 
 
-#frame #sidebar #search {
+#frame #sidebar .search {
 	border-top: 1px solid #505050;
 	border-bottom: 1px solid #505050;
 	font-weight: 300;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar #search {
+  #frame #sidebar .search {
     display: none;
   }
 }
-#frame #sidebar #search ::placeholder{
+#frame #sidebar .search ::placeholder{
   color: #808080;
 }
-#frame #sidebar #search label {
+#frame #sidebar .search label {
   position: absolute;
   margin: 10px 0 0 20px;
 }
-#frame #sidebar #search input {
+#frame #sidebar .search input {
   font-family: "proxima-nova",  "Source Sans Pro", sans-serif;
   padding: 10px 0 10px 46px;
   width: calc(100% - 25px);
@@ -384,55 +384,55 @@ body {
   background: #505050;
   color: #000000;
 }
-#frame #sidebar #search input:focus {
+#frame #sidebar .search input:focus {
   outline: none;
   background: #606060;
 }
 
-#frame #sidebar #contacts {
+#frame #sidebar .contacts {
   height: calc(100% - 177px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar #contacts {
+  #frame #sidebar .contacts {
     height: calc(100% - 149px);
     overflow-y: scroll;
     overflow-x: hidden;
   }
 }
-#frame #sidebar #contacts ul li.contact {
+#frame #sidebar .contacts ul li.contact {
   position: relative;
   padding: 10px 0 15px 0;
   font-size: 0.9em;
   cursor: pointer;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar #contacts ul li.contact {
+  #frame #sidebar .contacts ul li.contact {
     padding: 6px 0 46px 8px;
   }
 }
-#frame #sidebar #contacts ul li.contact:hover {
+#frame #sidebar .contacts ul li.contact:hover {
   background: #606060;
 }
-#frame #sidebar #contacts ul li.contact.active {
+#frame #sidebar .contacts ul li.contact.active {
   background: #606060;
   border-right: 5px solid #808080;
 }
-#frame #sidebar #contacts ul li.contact.active span.contact-status {
+#frame #sidebar .contacts ul li.contact.active span.contact-status {
   border: 2px solid #2ecc71 !important;
 }
-#frame #sidebar #contacts ul li.contact .wrap {
+#frame #sidebar .contacts ul li.contact .wrap {
   width: 88%;
   margin: 0 auto;
   position: relative;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar #contacts ul li.contact .wrap {
+  #frame #sidebar .contacts ul li.contact .wrap {
     width: 100%;
   }
 }
-#frame #sidebar #contacts ul li.contact .wrap span {
+#frame #sidebar .contacts ul li.contact .wrap span {
   position: absolute;
   left: 0;
   margin: -2px 0 0 -2px;
@@ -442,41 +442,41 @@ body {
   border: 2px solid #808080;
   background: #808080;
 }
-#frame #sidebar #contacts ul li.contact .wrap span.online {
+#frame #sidebar .contacts ul li.contact .wrap span.online {
   background: #2ecc71;
   border: 2px solid #2ecc71;
 }
-#frame #sidebar #contacts ul li.contact .wrap span.away {
+#frame #sidebar .contacts ul li.contact .wrap span.away {
   background: #f1c40f;
   border: 2px solid #f1c40f;
 }
-#frame #sidebar #contacts ul li.contact .wrap span.busy {
+#frame #sidebar .contacts ul li.contact .wrap span.busy {
   background: #e74c3c;
   border: 2px solid #e74c3c;
 }
-#frame #sidebar #contacts ul li.contact .wrap img {
+#frame #sidebar .contacts ul li.contact .wrap img {
   width: 40px;
   border-radius: 50%;
   float: left;
   margin-right: 10px;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar #contacts ul li.contact .wrap img {
+  #frame #sidebar .contacts ul li.contact .wrap img {
     margin-right: 0px;
   }
 }
-#frame #sidebar #contacts ul li.contact .wrap .meta {
+#frame #sidebar .contacts ul li.contact .wrap .meta {
   padding: 5px 0 0 0;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar #contacts ul li.contact .wrap .meta {
+  #frame #sidebar .contacts ul li.contact .wrap .meta {
     display: none;
   }
 }
-#frame #sidebar #contacts ul li.contact .wrap .meta .name {
+#frame #sidebar .contacts ul li.contact .wrap .meta .name {
   font-weight: 600;
 }
-#frame #sidebar #contacts ul li.contact .wrap .meta .preview {
+#frame #sidebar .contacts ul li.contact .wrap .meta .preview {
   margin: 5px 0 0 0;
   padding: 0 0 1px;
   font-weight: 400;
@@ -485,7 +485,7 @@ body {
   text-overflow: ellipsis;
   transition: 1s all ease;
 }
-#frame #sidebar #contacts ul li.contact .wrap .meta .preview span {
+#frame #sidebar .contacts ul li.contact .wrap .meta .preview span {
   position: initial;
   border-radius: initial;
   background: none;

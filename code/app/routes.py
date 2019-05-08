@@ -1,6 +1,6 @@
 import os
 from threading import Lock
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from app import app
 import time
 import bcrypt
@@ -19,7 +19,7 @@ socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
 
-def loadContact():
+def loadChat():
     myQuery = { '$or': [ { 'recipient': session['username'] }, { 'sender': session['username'] } ] }
     cursor = db.chat.distinct('chatID', myQuery)
     
@@ -30,9 +30,23 @@ def loadContact():
     return chats
 
 
-def loadChat():
-    myQuery = {}
-    return myQuery
+def loadContact(search):
+    myQuery = {'username' : {'$ne' : session['username']},
+           '$or' : [
+                 {'username' : {'$regex' : search, '$options': 'i'}},
+                 {'surname' : {'$regex' : search, '$options': 'i'}},
+                 {'firstName' : {'$regex' : search, '$options': 'i'}},
+                 {'email' : {'$regex' : search, '$options': 'i'}},
+                 {'company' : {'$regex' : search, '$options': 'i'}}]}
+    cursor = db.users.find(myQuery)
+    payload = []
+    content = {}
+    #print(cursor[0]['username'])
+    for doc in cursor:
+        content = {'username' : cursor[0], 'firstName' : cursor[1]}
+        payload.append(content)
+        
+    return payload
 
 
 @socketio.on('connect', namespace='/test')
@@ -62,29 +76,35 @@ def background_thread():
 @app.route('/index')
 def index():
     if 'username' in session:
-        print(session['username'])
         return render_template('index.html',\
                                current_user=session['username'],\
-                               chats=loadContact())
+                               chats=loadChat())
 
     return render_template('login.html', \
                            Form='login-form', \
                            altForm='register-form')
 
+@app.route('/search', methods=['POST', 'GET'])
+def search():
+    name = request.form['name']
+    search = request.form['search']
+    if name and search:
+        return jsonify(loadContact(search))
+      
+    return jsonify({'error' : 'Missing data!'})
+
 @app.route('/login', methods=['POST'])
 def login():
     users = db.users
     loginUser = users.find_one({'username' : request.form['username']})
-    print(request.form['username'])
     if loginUser:
         hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), loginUser['password'])
         if loginUser:
             if hashPass == loginUser['password']:
                 session['username'] = request.form['username']
-                print(session['username'])
                 return render_template('index.html',\
                                        current_user=session['username'],\
-                                       chats=loadContact())
+                                       chats=loadChat())
 
     return render_template('login.html', \
                            Form='login-form', \
@@ -93,8 +113,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-    print(session['username'])
-    print("here here")
     session.pop('username')
     return render_template('login.html', \
                            Form='login-form', \
@@ -114,7 +132,7 @@ def register():
             session['username'] = request.form['username']
             return render_template('index.html',\
                                    current_user=session['username'],\
-                                   chats=loadContact())
+                                   chats=loadChat())
         
     return render_template('login.html', \
                            altForm='login-form', \
@@ -122,8 +140,11 @@ def register():
                            registerMessage='Sorry that username already exists')
 
 
+
+#Socket.io
+
 @socketio.on('join', namespace='/test')
-def join(message):    
+def join(message):
     join_room(message['room'])
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
@@ -165,3 +186,5 @@ def disconnect_request():
     emit('my_response',
          {'data': 'Disconnected!', 'count': session['receive_count']})
     disconnect()
+
+
