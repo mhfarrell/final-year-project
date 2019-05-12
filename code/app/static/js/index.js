@@ -47,12 +47,12 @@ $('#addcontact').click(function(){
 
         $(document).ready(function() {
 			console.log("open");
-            // Use a "/test" namespace.
+            // Use a "/" namespace.
             // An application can open a connection on multiple namespaces, and
             // Socket.IO will multiplex all those connections on a single
             // physical channel. If you don't care about multiple channels, you
             // can set the namespace to an empty string.
-            namespace = '/test';
+            namespace = '/';
 			var currentRoom = null;
 			var activeRoom = null;
 			var activeUser = null;

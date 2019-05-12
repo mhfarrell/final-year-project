@@ -1,11 +1,8 @@
 import os
+import sys, getopt, time, bcrypt, pymongo
 from threading import Lock
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from app import app
-import time
-import bcrypt
-import sys, getopt, pprint
-import pymongo
 from pymongo import MongoClient
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
@@ -50,8 +47,8 @@ def loadContact(search):
     return payload
 
 
-@socketio.on('connect', namespace='/test')
-def test_connect():
+@socketio.on('connect', namespace='/')
+def Socketconnect():
     global thread
     with thread_lock:
         if thread is None:
@@ -59,8 +56,8 @@ def test_connect():
     emit('my_response', {'data': 'Connected', 'count': 0})
 
 
-@socketio.on('disconnect', namespace='/test')
-def test_disconnect():
+@socketio.on('disconnect', namespace='/')
+def Socketdisconnect():
     print('Client disconnected', request.sid)
 
 def background_thread():
@@ -71,7 +68,7 @@ def background_thread():
         count += 1
         socketio.emit('my_response',
                       {'data': 'Server generated event', 'count': count},
-                      namespace='/test')
+                      namespace='/')
 
 @app.route('/')
 @app.route('/index')
@@ -144,7 +141,7 @@ def register():
 
 #Socket.io
 
-@socketio.on('join', namespace='/test')
+@socketio.on('join', namespace='/')
 def join(message):
     join_room(message['room'])
     session['receive_count'] = session.get('receive_count', 0) + 1
@@ -158,7 +155,7 @@ def join(message):
              {'data': doc['data'], 'username': doc['sender'], 'datetime':doc['datetime'],'count': session['receive_count']},
              room=message['room'])
 
-@socketio.on('leave', namespace='/test')
+@socketio.on('leave', namespace='/')
 def leave(message):
     leave_room(message['room'])
     session['receive_count'] = session.get('receive_count', 0) + 1
@@ -167,8 +164,8 @@ def leave(message):
           'count': session['receive_count']})
 
 
-@socketio.on('sendMessage', namespace='/test')
-def send_room_message(message):
+@socketio.on('sendMessage', namespace='/')
+def sendMessage(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
          {'data': 'testing message: ' + ', ' + message['data'],
@@ -181,7 +178,7 @@ def send_room_message(message):
          room=message['room'])
 
 
-@socketio.on('disconnect_request', namespace='/test')
+@socketio.on('disconnect_request', namespace='/')
 def disconnect_request():
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my_response',
