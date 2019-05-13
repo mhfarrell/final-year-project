@@ -46,25 +46,11 @@ $('#addcontact').click(function(){
 });	
 
         $(document).ready(function() {
-			console.log("open");
-            // Use a "/" namespace.
-            // An application can open a connection on multiple namespaces, and
-            // Socket.IO will multiplex all those connections on a single
-            // physical channel. If you don't care about multiple channels, you
-            // can set the namespace to an empty string.
             namespace = '/';
 			var currentRoom = null;
 			var activeRoom = null;
 			var activeUser = null;
-
-            // Connect to the Socket.IO server.
-            // The connection URL has the following format:
-            //     http[s]://<domain>:<port>[/<namespace>]
             var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
-			console.log(socket);
-            // Event handler for new connections.
-            // The callback function is invoked when a connection with the
-            // server is established.
             socket.on('connect', function() {
                 socket.emit('myConnect', {data: ('#yourUsername').text});
             });
@@ -106,7 +92,7 @@ $('#addcontact').click(function(){
 				activeRoom = i;
 				activeUser = $('#yourUsername').text();
 				$('#curContact').text($('#user'+i).text());
-				//toggle class later
+				//toggle class later with css
 				$('#'+i).attr('class', 'contact active');
 				socket.emit('join', {room: currentRoom, username: activeUser});
 				return;

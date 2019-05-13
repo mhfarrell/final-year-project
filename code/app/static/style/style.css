@@ -63,16 +63,6 @@ body {
 #login-form .register-form {
   display: none;
 }
-#fbLogin {
-  width: 88%;
-  border: 0;
-  background: #393939;
-}
-#twitLogin {
-  width: 80%;
-  border: 0;
-  background: #393939;
-}
 #login-form div span {
   font-weight: bold;
   color: #aaaaaa
