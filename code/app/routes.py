@@ -6,6 +6,7 @@ from app import app
 from pymongo import MongoClient
 from flask_socketio import SocketIO, emit, join_room, leave_room, \
     close_room, rooms, disconnect
+from html_sanitizer import Sanitizer
 
 async_mode = None
 c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
@@ -15,6 +16,7 @@ app.secret_key = 'shush_its_secret'
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
+sanitizer = Sanitizer()
 
 def loadChat():
     myQuery = { '$or': [ { 'recipient': session['username'] }, { 'sender': session['username'] } ] }
@@ -163,19 +165,18 @@ def leave(message):
          {'data': 'Left Room: ' + ', '.join(rooms()),
           'count': session['receive_count']})
 
-
+#<script>alert("Hello! I am an alert box!!");</script>
 @socketio.on('sendMessage', namespace='/')
 def sendMessage(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my_response',
-         {'data': 'testing message: ' + ', ' + message['data'],
-          'count': session['receive_count']})
     newID = "msg" + str(db.chat.count()+1)
-    myDict = {"msgID": newID , "chatID" : message['room'], "recipient" : message['recipient'], "sender": message['sender'], "datetime": int(time.time()) , "data": message['data']}    
-    db.chat.insert_one(myDict)
-    emit('my_response',
-         {'data': message['data'], 'username': message['sender'], 'count': session['receive_count']},
-         room=message['room'])
+    sanatiseMsg = sanitizer.sanitize(message['data'])
+    if sanatiseMsg != "":
+        myDict = {"msgID": newID , "chatID" : message['room'], "recipient" : message['recipient'], "sender": message['sender'], "datetime": int(time.time()) , "data": sanatiseMsg}    
+        db.chat.insert_one(myDict)
+        emit('my_response',
+             {'data': sanatiseMsg, 'username': message['sender'], 'count': session['receive_count']},
+             room=message['room'])
 
 
 @socketio.on('disconnect_request', namespace='/')
