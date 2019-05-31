@@ -379,30 +379,32 @@ body {
   background: #606060;
 }
 
-#frame #sidebar .contacts {
+
+
+#frame #sidebar .contacts, .contactResults {
   height: calc(100% - 177px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar .contacts {
+  #frame #sidebar .contacts, .contactResults {
     height: calc(100% - 149px);
     overflow-y: scroll;
     overflow-x: hidden;
   }
 }
-#frame #sidebar .contacts ul li.contact {
+#frame #sidebar .contacts ul li.contact, .contactResults ul li.contactResult {
   position: relative;
   padding: 10px 0 15px 0;
   font-size: 0.9em;
   cursor: pointer;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar .contacts ul li.contact {
+  #frame #sidebar .contacts ul li.contact, .contactResults ul li.contactResult {
     padding: 6px 0 46px 8px;
   }
 }
-#frame #sidebar .contacts ul li.contact:hover {
+#frame #sidebar .contacts ul li.contact:hover, .contactResults ul li.contactResult:hover {
   background: #606060;
 }
 #frame #sidebar .contacts ul li.contact.active {
@@ -412,13 +414,13 @@ body {
 #frame #sidebar .contacts ul li.contact.active span.contact-status {
   border: 2px solid #2ecc71 !important;
 }
-#frame #sidebar .contacts ul li.contact .wrap {
+#frame #sidebar .contacts ul li.contact .wrap, .contactResults ul li.contactResult .wrap {
   width: 88%;
   margin: 0 auto;
   position: relative;
 }
 @media screen and (max-width: 735px) {
-  #frame #sidebar .contacts ul li.contact .wrap {
+  #frame #sidebar .contacts ul li.contact .wrap, , .contactResults ul li.contactResult .wrap {
     width: 100%;
   }
 }
@@ -484,6 +486,9 @@ body {
   margin: 0 0 0 1px;
   opacity: .5;
 }
+
+
+
 #frame #sidebar #bottom-bar {
   position: absolute;
   width: 100%;

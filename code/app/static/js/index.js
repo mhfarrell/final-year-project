@@ -1,37 +1,5 @@
 $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
-$("#profile-img").click(function() {
-	$("#status-options").toggleClass("active");
-});
-
-$(".expand-button").click(function() {
-  $("#profile").toggleClass("expanded");
-	$("#sidebar").toggleClass("expanded");
-});
-
-$("#status-options ul li").click(function() {
-	$("#profile-img").removeClass();
-	$("#status-online").removeClass("active");
-	$("#status-away").removeClass("active");
-	$("#status-busy").removeClass("active");
-	$("#status-offline").removeClass("active");
-	$(this).addClass("active");
-	
-	if($("#status-online").hasClass("active")) {
-		$("#profile-img").addClass("online");
-	} else if ($("#status-away").hasClass("active")) {
-		$("#profile-img").addClass("away");
-	} else if ($("#status-busy").hasClass("active")) {
-		$("#profile-img").addClass("busy");
-	} else if ($("#status-offline").hasClass("active")) {
-		$("#profile-img").addClass("offline");
-	} else {
-		$("#profile-img").removeClass();
-	};
-	
-	$("#status-options").removeClass("active");
-});
-
 $('#addcontact').click(function(){
 	$('.sideMenu').animate({height: "toggle", opacity: "toggle"}, "slow");
 	if ($("#addcontact span").text() == 'Chats'){
@@ -77,13 +45,43 @@ $('#addcontact').click(function(){
 			//
 			$(document).on('click', function(event){
 				var liID = $(event.target).closest('li').attr('id');
-				if($(event.target).hasClass('contact')){
+				console.log(liID);
+				if($(event.target).hasClass('contactName')){
+					console.log("contact selected")
 					if (activeRoom == null){						
 						roomJoin(liID);
 					}else{
 						$('#'+activeRoom).removeClass('contact active').addClass('contact');
 						roomJoin(liID);
 					}
+				}else if($(event.target).hasClass('searchedName')){
+					
+					console.log('ajax');
+					$.ajax({
+						data : {
+							username : liID
+						},
+						type : 'POST',
+						url : '/newchat'
+						})
+							.done(function(data) {
+						console.log('after ajax');
+						if (data.error) {
+							console.log(data.error)
+						}
+						else {
+							console.log(data);
+							for(i in data){
+								console.log(i);
+						
+								//$('<li id="3" class="contact"><div class="wrap"><span class="contact-status online"></span><img src="{{ url_for(' + "static" + ', filename=' + "images/placeholder.png" + ') }}" alt="" /><div class="meta"><p hidden id="' + data[i].chatID + '">' + data[i].chatID + '</p><p id="' + liID + '" class="name contactName">' + data[i].chatID +'</p><p class="preview"><i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>' + data[i].username + ':</span>'+ "Hi" + '</p></div></div></li>'.appendTo($('.contacts ul'));
+							console.log(data[i].chatID);
+							}
+						}
+					});
+					//$("#contSearch").prop("value", "");
+					event.preventDefault();					
+
 				}
 			});
 
@@ -141,6 +139,7 @@ $('#addcontact').click(function(){
 							console.log(data);
 							for(i in data){
 								console.log(i);
+								$('<li class="contactResult" id="'+ data[i].username +'"><div class="wrap"><div class="meta"><p class="name searchedName">'+ data[i].username +'</p></div></div></li>').appendTo($('.contactResults ul'));
 							console.log(data[i].username);
 							}
 						}
@@ -149,12 +148,6 @@ $('#addcontact').click(function(){
 					event.preventDefault();
 				}			   
 			};
-
-/* 			document.getElementById('chatSearch').onkeydown = function(e){
-				if(e.keyCode == 13){
-					event.preventDefault();	
-				}			   
-			}; */
 			
 			
             $('form#sendMessage').submit(function(event) {

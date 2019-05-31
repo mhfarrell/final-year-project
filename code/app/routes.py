@@ -21,12 +21,32 @@ sanitizer = Sanitizer()
 def loadChat():
     myQuery = { '$or': [ { 'recipient': session['username'] }, { 'sender': session['username'] } ] }
     cursor = db.chat.distinct('chatID', myQuery)
-    
+    i = 0
     chats = []
     for doc in cursor:
         cursor2 = db.chat.find({"chatID" : doc}, limit = 1).sort([('msgID',  pymongo.DESCENDING)])
         chats.append(cursor2)
     return chats
+
+def createChat(username):
+    print("createContact")
+    myQuery = { '$or': [ { 'recipient': username }, { 'sender': username } ] }
+    if db.chat.distinct('chatID', myQuery):
+        print("found " + username + " in db")
+        return
+    else:
+        print("not found " + username + " in db")
+        msgID = "msg" + str(db.chat.count()+1)
+        print("msgid: " + msgID)
+        cursor = db.chat.find().sort([('chatID',  pymongo.DESCENDING)]).limit(1)
+        chtID = ""
+        for doc in cursor:
+            print(doc['chatID'])
+            chtID = str(int(doc['chatID']) + 1)
+            print(chtID)
+        myDict = {"msgID": msgID , "chatID" : chtID, "recipient" : username, "sender": session['username'], "datetime": int(time.time()) , "data": "Hi"}    
+        db.chat.insert_one(myDict)
+        return {'chatID' : chtID, 'sender' : session['username']}
 
 
 def loadContact(search):
@@ -42,7 +62,6 @@ def loadContact(search):
     payload = []
     content = {}
     for doc in cursor:
-        print('username is: ' + doc['username'])
         content = {'username' : doc['username']}
         payload.append(content)
         
@@ -92,6 +111,17 @@ def search():
         return jsonify(loadContact(search))
       
     return jsonify({'error' : 'Missing data!'})
+
+@app.route('/newchat', methods=['POST', 'GET'])
+def newchat():
+    username = request.form['username']
+    if username:
+        print("the username is: " + username)
+        cChat = jsonify(createChat(username))
+        if cChat:
+            return cChat
+      
+    return jsonify({'error' : 'Missing data!'})    
 
 @app.route('/login', methods=['POST'])
 def login():
