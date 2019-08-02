@@ -4,7 +4,7 @@
 download
 
 
-docker build -t flask_chat:latest .
+docker build -t *what ever you named it*:latest .
 
 or
 
