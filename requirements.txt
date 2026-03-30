@@ -7,5 +7,5 @@ pymongo==4.11.3
 python-engineio==4.11.2
 python-socketio==5.12.1
 requests==2.32.3
-html-sanitizer==2.5.1
+html-sanitizer==2.6.0
 eventlet==0.37.0
