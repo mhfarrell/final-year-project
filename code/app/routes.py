@@ -1,5 +1,5 @@
 import os
-import sys, getopt, time, bcrypt, pymongo
+import sys, time, bcrypt, pymongo
 from threading import Lock
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from app import app
@@ -9,10 +9,11 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, \
 from html_sanitizer import Sanitizer
 
 async_mode = None
-c = MongoClient('mongodb://admin:Admin123@ds145555.mlab.com:45555/chatdatabase')
-db= c.chatdatabase
+mongo_uri = os.environ.get('MONGO_URI', 'mongodb://admin:Admin123@localhost:27017/chatdatabase?authSource=admin')
+c = MongoClient(mongo_uri)
+db = c.chatdatabase
 #make this a hashed version of something unique to the user
-app.secret_key = 'shush_its_secret'
+app.secret_key = os.environ.get('SECRET_KEY', 'shush_its_secret')
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
@@ -20,31 +21,34 @@ sanitizer = Sanitizer()
 
 def loadChat():
     myQuery = { '$or': [ { 'recipient': session['username'] }, { 'sender': session['username'] } ] }
-    cursor = db.chat.distinct('chatID', myQuery)
-    i = 0
+    chatIDs = db.chat.distinct('chatID', myQuery)
     chats = []
-    for doc in cursor:
-        cursor2 = db.chat.find({"chatID" : doc}, limit = 1).sort([('msgID',  pymongo.DESCENDING)])
-        chats.append(cursor2)
+    for chatID in chatIDs:
+        doc = db.chat.find_one({"chatID" : chatID}, sort=[('msgID', pymongo.DESCENDING)])
+        if doc:
+            chats.append(doc)
     return chats
 
 def createChat(username):
     print("createContact")
-    myQuery = { '$or': [ { 'recipient': username }, { 'sender': username } ] }
+    myQuery = { '$or': [
+        { 'recipient': username, 'sender': session['username'] },
+        { 'sender': username, 'recipient': session['username'] }
+    ]}
     if db.chat.distinct('chatID', myQuery):
-        print("found " + username + " in db")
+        print("found chat with " + username + " already")
         return
     else:
         print("not found " + username + " in db")
-        msgID = "msg" + str(db.chat.count()+1)
+        msgID = "msg" + str(db.chat.count_documents({}) + 1)
         print("msgid: " + msgID)
         cursor = db.chat.find().sort([('chatID',  pymongo.DESCENDING)]).limit(1)
-        chtID = ""
+        chtID = "1"
         for doc in cursor:
             print(doc['chatID'])
             chtID = str(int(doc['chatID']) + 1)
             print(chtID)
-        myDict = {"msgID": msgID , "chatID" : chtID, "recipient" : username, "sender": session['username'], "datetime": int(time.time()) , "data": "Hi"}    
+        myDict = {"msgID": msgID , "chatID" : chtID, "recipient" : username, "sender": session['username'], "datetime": int(time.time()) , "data": "Hi"}
         db.chat.insert_one(myDict)
         return {'chatID' : chtID, 'sender' : session['username']}
 
@@ -60,11 +64,10 @@ def loadContact(search):
                  {'company' : {'$regex' : search, '$options': 'i'}}]}]}
     cursor = db.users.find(myQuery)
     payload = []
-    content = {}
     for doc in cursor:
         content = {'username' : doc['username']}
         payload.append(content)
-        
+
     return payload
 
 
@@ -109,7 +112,7 @@ def search():
     search = request.form['search']
     if name and search:
         return jsonify(loadContact(search))
-      
+
     return jsonify({'error' : 'Missing data!'})
 
 @app.route('/newchat', methods=['POST', 'GET'])
@@ -120,8 +123,8 @@ def newchat():
         cChat = jsonify(createChat(username))
         if cChat:
             return cChat
-      
-    return jsonify({'error' : 'Missing data!'})    
+
+    return jsonify({'error' : 'Missing data!'})
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -129,12 +132,11 @@ def login():
     loginUser = users.find_one({'username' : request.form['username']})
     if loginUser:
         hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), loginUser['password'])
-        if loginUser:
-            if hashPass == loginUser['password']:
-                session['username'] = request.form['username']
-                return render_template('index.html',\
-                                       current_user=session['username'],\
-                                       chats=loadChat())
+        if hashPass == loginUser['password']:
+            session['username'] = request.form['username']
+            return render_template('index.html',\
+                                   current_user=session['username'],\
+                                   chats=loadChat())
 
     return render_template('login.html', \
                            Form='login-form', \
@@ -158,12 +160,12 @@ def register():
         #If the username is unclaimed the new user can register
         if userCheck is None:
             hashPass = bcrypt.hashpw(request.form['password'].encode('utf-8'), bcrypt.gensalt())
-            users.insert({'username' : request.form['username'], 'password' : hashPass, 'firstName' : request.form['firstname'], 'surname' : request.form['surname'], 'email' : request.form['email'], 'company' : request.form['company']})
+            users.insert_one({'username' : request.form['username'], 'password' : hashPass, 'firstName' : request.form['firstname'], 'surname' : request.form['surname'], 'email' : request.form['email'], 'company' : request.form['company']})
             session['username'] = request.form['username']
             return render_template('index.html',\
                                    current_user=session['username'],\
                                    chats=loadChat())
-        
+
     return render_template('login.html', \
                            altForm='login-form', \
                            Form='register-form', \
@@ -181,7 +183,7 @@ def join(message):
          {'data': 'Joined Room: ' + ', '.join(rooms()),
           'count': session['receive_count']})
     myQuery = {'chatID' : message['room']}
-    cursor = db.chat.find(myQuery) 
+    cursor = db.chat.find(myQuery)
     for doc in cursor:
         emit('my_response',
              {'data': doc['data'], 'username': doc['sender'], 'datetime':doc['datetime'],'count': session['receive_count']},
@@ -199,10 +201,10 @@ def leave(message):
 @socketio.on('sendMessage', namespace='/')
 def sendMessage(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
-    newID = "msg" + str(db.chat.count()+1)
+    newID = "msg" + str(db.chat.count_documents({}) + 1)
     sanatiseMsg = sanitizer.sanitize(message['data'])
     if sanatiseMsg != "":
-        myDict = {"msgID": newID , "chatID" : message['room'], "recipient" : message['recipient'], "sender": message['sender'], "datetime": int(time.time()) , "data": sanatiseMsg}    
+        myDict = {"msgID": newID , "chatID" : message['room'], "recipient" : message['recipient'], "sender": message['sender'], "datetime": int(time.time()) , "data": sanatiseMsg}
         db.chat.insert_one(myDict)
         emit('my_response',
              {'data': sanatiseMsg, 'username': message['sender'], 'count': session['receive_count']},
@@ -215,5 +217,3 @@ def disconnect_request():
     emit('my_response',
          {'data': 'Disconnected!', 'count': session['receive_count']})
     disconnect()
-
-

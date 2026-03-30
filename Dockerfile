@@ -1,8 +1,9 @@
-FROM python:3.7.2
-MAINTAINER Matt Farrell "matthew.farrell@students.plymouth.ac.uk"
-COPY . /app
+FROM python:3.12-slim
+LABEL maintainer="Matt Farrell <matthew.h.farrell@gmail.com>"
+COPY requirements.txt /app/requirements.txt
 WORKDIR /app
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app
 ENV FLASK_APP="./code/chat.py"
-CMD ["flask", "run", "--host", "0.0.0.0"]
-
+EXPOSE 5000
+CMD ["python", "-m", "flask", "run", "--host", "0.0.0.0"]

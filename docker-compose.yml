@@ -1,0 +1,28 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: chat-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Admin123
+      MONGO_INITDB_DATABASE: chatdatabase
+    volumes:
+      - mongo-data:/data/db
+
+  app:
+    build: .
+    container_name: chat-app
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI: "mongodb://admin:Admin123@mongo:27017/chatdatabase?authSource=admin"
+      SECRET_KEY: "change-me-in-production"
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:

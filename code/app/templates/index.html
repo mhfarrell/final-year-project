@@ -3,10 +3,10 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>webChat</title>
-		<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
 		<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-		<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+		<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
 		<link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
 	</head>
 	<body>
@@ -18,72 +18,55 @@
 						<p id="yourUsername">{{ current_user }}</p>
 						<p><a href="/logout" style="color:white;">Log out</a></p>
 					</div>
-				</div>			
+				</div>
 			</div>
 			<div id="sidebar">
-			
+
 			<form id="contactSearch" class="sideMenu" style="display: none;">
 				<div class="search">
 					<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
 					<input type="text" id="contSearch" placeholder="Search For contacts..." />
 				</div>
-				<div class="contactResults">					
-					<ul>													
+				<div class="contactResults">
+					<ul>
 					</ul>
 				</div>
 			</form>
 			<form class="sideMenu">
-				<div class="contacts">					
-					<ul>						
-						{% for chats in chats -%}
+				<div class="contacts">
+					<ul>
+						{% for chat in chats -%}
 							<li id="{{loop.index}}" class="contact">
-							<div class="wrap">					
+							<div class="wrap">
 								<span class="contact-status online"></span>
 								<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
 								<div class="meta">
-									<p hidden id="chat{{loop.index}}">{{chats[loop.index]['chatID']}}</p>
-									{% if current_user == chats[loop.index]['sender'] %}
-										<p id="user{{loop.index}}" class="name contactName">{{chats[loop.index]['recipient']}}</p>
+									<p hidden id="chat{{loop.index}}">{{chat['chatID']}}</p>
+									{% if current_user == chat['sender'] %}
+										<p id="user{{loop.index}}" class="name contactName">{{chat['recipient']}}</p>
 									{% else %}
-										<p id="user{{loop.index}}" class="name contactName">{{chats[loop.index]['sender']}}</p>
+										<p id="user{{loop.index}}" class="name contactName">{{chat['sender']}}</p>
 									{% endif %}
-									<p class="preview"><i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>{{chats[loop.index]['sender']}}:</span> {{chats[loop.index]['data']}}</p>
+									<p class="preview"><i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>{{chat['sender']}}:</span> {{chat['data']}}</p>
 								</div>
 							</div>
 						</li>
 						{%- endfor %}
 					</ul>
 				</div>
-			</form>									
-							<!--add something that JQuery can get counts final value-->
-							<!--example
-							"contact-status online" -- online
-							"contact-status away" -- away
-							"contact-status busy" -- busy
-							"contact-status" -- offline
-							<li class="contact">
-								<div class="wrap">
-									<span class="contact-status away"></span>
-									<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
-									<div class="meta">
-										<p class="name">Contact Three</p>
-										<p class="preview">Last message in chat</p>
-									</div>
-								</div>
-							</li>
-							-->
+			</form>
 				<div id="bottom-bar">
-					<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
-					<button id="groupchat"><i class="fa fa-users fa-fw" aria-hidden="true"></i> <span>Create Group Chat</span></button>
-					<button id="filtercontact"><i class="fa fa-filter fa-fw" aria-hidden="true"></i> <span>Filter</span></button>
-					<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+					<button id="addcontact" type="button"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
+					<button id="groupchat" type="button"><i class="fa fa-users fa-fw" aria-hidden="true"></i> <span>Create Group Chat</span></button>
+					<button id="filtercontact" type="button"><i class="fa fa-filter fa-fw" aria-hidden="true"></i> <span>Filter</span></button>
+					<button id="settings" type="button"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
 				</div>
 			</div>
 			<div class="chatWindow">
 				<div class="contact-profile">
 					<img src="{{ url_for('static', filename='images/placeholder.png') }}" alt="" />
 					<p id="curContact"></p>
-					<input hidden id="yourUsername" type="text" value="{{ current_user }}" />
+					<input hidden id="currentUser" type="text" value="{{ current_user }}" />
 				</div>
 				<div class="messages">
 					<ul id="chatMsg">
@@ -94,20 +77,20 @@
 						</li>
 					</ul>
 				</div>
-				
+
 				<form id="sendMessage" method="POST" action='#'>
 					<div class="message-input">
 						<div class="wrap">
 						<input id="roomMessage" type="text" placeholder="Write your message..." />
 						<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
-						<button class="submit"><i class="fa fa-send" aria-hidden="true"></i></button>
+						<button type="submit" class="submit"><i class="fa fa-send" aria-hidden="true"></i></button>
 						</div>
 					</div>
 				</form>
 			</div>
 		</div>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js'></script>
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js'></script>
+		<script type="text/javascript" src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 		<script  src="{{ url_for('static', filename='js/index.js') }}"></script>
 	</body>
 </html>

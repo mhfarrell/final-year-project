@@ -5,13 +5,13 @@ $('#addcontact').click(function(){
 	if ($("#addcontact span").text() == 'Chats'){
 		$("#addcontact span").text('Add Contact');
 		$("#addcontact").removeClass();
-		$("#addcontact").addClass("fa fa-user-plus fa-fw");		
+		$("#addcontact").addClass("fa fa-user-plus fa-fw");
 	}else{
 		$("#addcontact span").text('Chats');
 		$("#addcontact").removeClass();
 		$("#addcontact").addClass("fa fa-comments-o fa-fw");
 	}
-});	
+});
 
         $(document).ready(function() {
             namespace = '/';
@@ -20,7 +20,7 @@ $('#addcontact').click(function(){
 			var activeUser = null;
             var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
             socket.on('connect', function() {
-                socket.emit('myConnect', {data: ('#yourUsername').text});
+                socket.emit('myConnect', {data: $('#yourUsername').text()});
             });
 
             socket.on('my_response', function(msg) {
@@ -31,15 +31,15 @@ $('#addcontact').click(function(){
 						$('<li class="sent"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
 						$('.message-input input').val(null);
 						$('.contact.active .preview').html('<i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>' + msg.username +': </span>' + msg.data);
-						$(".messages").animate({ scrollTop: $(document).height() }, "fast");						
+						$(".messages").animate({ scrollTop: $(document).height() }, "fast");
 					}else{
 						$('<li class="replies"><img src="/static/images/placeholder.png" alt="" title="'+ msg.username +'" /><p>' + msg.data + '</p></li>').appendTo($('.messages ul'));
 						$('.contact.active .preview').html('<i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>' + msg.username +': </span>' + msg.data);
-						$(".messages").animate({ scrollTop: $(document).height() }, "fast");							
+						$(".messages").animate({ scrollTop: $(document).height() }, "fast");
 					}
 				}
             });
-			
+
 			//
 			//individual user chats
 			//
@@ -48,14 +48,14 @@ $('#addcontact').click(function(){
 				console.log(liID);
 				if($(event.target).hasClass('contactName')){
 					console.log("contact selected")
-					if (activeRoom == null){						
+					if (activeRoom == null){
 						roomJoin(liID);
 					}else{
 						$('#'+activeRoom).removeClass('contact active').addClass('contact');
 						roomJoin(liID);
 					}
 				}else if($(event.target).hasClass('searchedName')){
-					
+
 					console.log('ajax');
 					$.ajax({
 						data : {
@@ -70,17 +70,10 @@ $('#addcontact').click(function(){
 							console.log(data.error)
 						}
 						else {
-							console.log(data);
-							for(i in data){
-								console.log(i);
-						
-								//$('<li id="3" class="contact"><div class="wrap"><span class="contact-status online"></span><img src="{{ url_for(' + "static" + ', filename=' + "images/placeholder.png" + ') }}" alt="" /><div class="meta"><p hidden id="' + data[i].chatID + '">' + data[i].chatID + '</p><p id="' + liID + '" class="name contactName">' + data[i].chatID +'</p><p class="preview"><i class="fa fa-comment-o fa-fw" aria-hidden="true"></i><span>' + data[i].username + ':</span>'+ "Hi" + '</p></div></div></li>'.appendTo($('.contacts ul'));
-							console.log(data[i].chatID);
-							}
+							window.location.href = '/';
 						}
 					});
-					//$("#contSearch").prop("value", "");
-					event.preventDefault();					
+					event.preventDefault();
 
 				}
 			});
@@ -95,7 +88,7 @@ $('#addcontact').click(function(){
 				socket.emit('join', {room: currentRoom, username: activeUser});
 				return;
 			}
-			
+
 			function leaveCode(i){
 				socket.emit('leave', {room: currentRoom});
 				$('#curContact').text(null);
@@ -104,7 +97,7 @@ $('#addcontact').click(function(){
 				$('#'+i).removeClass('contact active').addClass('contact');
 				return;
 			}
-			
+
 			//pointless but seems to not work without ?!?!
 			function roomJoin(i){
 				if (currentRoom == null){
@@ -115,10 +108,8 @@ $('#addcontact').click(function(){
 					joinCode(i);
 					return false;
 				}
-				return;
 			}
-			//semi working
-			
+
 			document.getElementById('contactSearch').onkeydown = function(e){
 				if(e.keyCode == 13){
 					console.log('ajax');
@@ -145,18 +136,18 @@ $('#addcontact').click(function(){
 						}
 					});
 					$("#contSearch").prop("value", "");
-					event.preventDefault();
-				}			   
+					e.preventDefault();
+				}
 			};
-			
-			
+
+
             $('form#sendMessage').submit(function(event) {
 				console.log('room: ' + currentRoom + ', username: ' + activeUser);
                 socket.emit('sendMessage', {room: currentRoom, data: $('#roomMessage').val(), sender: activeUser, recipient: $('#user'+activeRoom).text()});
 				$("#roomMessage").prop("value", "");
                 return false;
             });
-			
+
 			//part of logout code
             $('form#disconnect').submit(function(event) {
                 socket.emit('disconnect_request');
